@@ -44,8 +44,11 @@ struct SetupView: View {
             }
             .padding(.top, 10)
             .padding(.bottom, 5)
-            .background(Color(.systemBackground).shadow(radius: 0.5))
-            
+            .background(
+                VisualEffectBlurView(style: .systemMaterial) // **Modernes UI mit Blur-Effekt**
+                    .edgesIgnoringSafeArea(.top)
+            )
+
             // **Word List**
             ScrollView {
                 VStack(spacing: 8) { // Weniger Abstand zwischen den Zeilen
@@ -70,9 +73,8 @@ struct SetupView: View {
                                     .padding(.trailing, 10)
                             }
                             .frame(height: 50) // Kleinere Zeilenhöhe
-                            .background(Color(.systemGray6))
+                            .background(Color(.systemGray5)) // **Mehr Kontrast im Light Mode**
                             .cornerRadius(10)
-                            .shadow(color: Color.black.opacity(0.05), radius: 1, x: 0, y: 1)
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal)
@@ -113,4 +115,15 @@ struct SetupView: View {
         
         speechSynthesizer.speak(utterance)
     }
+}
+
+// **Blur View für Navigation Bar**
+struct VisualEffectBlurView: UIViewRepresentable {
+    var style: UIBlurEffect.Style
+
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: style))
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }

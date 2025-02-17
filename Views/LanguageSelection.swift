@@ -5,10 +5,11 @@ struct LanguageSelection: View {
     @EnvironmentObject var settings: Settings // Zugriff auf globale Einstellungen
 
     let languages: [(code: String, name: String, flag: String)] = [
-        ("de-DE", "German", "🇩🇪"),
         ("es-ES", "Spanish", "🇪🇸"),
         ("it-IT", "Italian", "🇮🇹"),
+        ("de-DE", "German", "🇩🇪"),
         ("fr-FR", "French", "🇫🇷"),
+        ("sv-SE", "Swedish", "🇸🇪"),
         ("zh-CN", "Chinese", "🇨🇳")
     ]
 
@@ -19,6 +20,7 @@ struct LanguageSelection: View {
             Text("Select Language")
                 .font(.title2)
                 .fontWeight(.semibold)
+                .padding()
 
             // **Flaggen & Sprachen als Buttons**
             LazyVGrid(
@@ -26,7 +28,7 @@ struct LanguageSelection: View {
                     GridItem(.flexible(), spacing: 12),
                     GridItem(.flexible(), spacing: 12)
                 ],
-                spacing: 16 // Vertikaler Abstand zwischen Reihen
+                spacing: 12 // Vertikaler Abstand zwischen Reihen
             ) {
                 ForEach(languages, id: \.code) { language in
                     Button(action: {
@@ -34,7 +36,7 @@ struct LanguageSelection: View {
                     }) {
                         VStack {
                             Text(language.flag)
-                                .font(.system(size: 50))
+                                .font(.system(size: 60))
 
                             Text(language.name)
                                 .font(.subheadline)
@@ -49,10 +51,6 @@ struct LanguageSelection: View {
                 }
             }
             .padding(.horizontal)
-
-            Text("Selected: \(languageDisplayName(language: settings.selectedLanguage))")
-                .font(.headline)
-                .padding(.top, 10)
 
             Spacer()
 
