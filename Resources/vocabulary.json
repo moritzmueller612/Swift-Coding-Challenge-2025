@@ -1,0 +1,142 @@
+[
+  {
+      "name": "car",
+      "image": "Car",
+      "translations": {
+          "en": "Car",
+          "de": "Auto",
+          "es": "Coche",
+          "it": "Macchina",
+          "fr": "Voiture",
+          "zh": "汽车"
+      },
+      "category": "vehicles",
+      "difficulty": 1
+  },
+  {
+      "name": "bed",
+      "image": "Bed",
+      "translations": {
+          "en": "Bed",
+          "de": "Bett",
+          "es": "Cama",
+          "it": "Letto",
+          "fr": "Lit",
+          "zh": "床"
+      },
+      "category": "furniture",
+      "difficulty": 1
+  },
+  {
+      "name": "pencil",
+      "image": "Pencil",
+      "translations": {
+          "en": "Pencil",
+          "de": "Bleistift",
+          "es": "Lápiz",
+          "it": "Matita",
+          "fr": "Crayon",
+          "zh": "铅笔"
+      },
+      "category": "stationery",
+      "difficulty": 1
+  },
+  {
+      "name": "turtle",
+      "image": "Turtle",
+      "translations": {
+          "en": "Turtle",
+          "de": "Schildkröte",
+          "es": "Tortuga",
+          "it": "Tartaruga",
+          "fr": "Tortue",
+          "zh": "乌龟"
+      },
+      "category": "animals",
+      "difficulty": 1
+  },
+  {
+      "name": "scissors",
+      "image": "Scissors",
+      "translations": {
+          "en": "Scissors",
+          "de": "Schere",
+          "es": "Tijeras",
+          "it": "Forbici",
+          "fr": "Ciseaux",
+          "zh": "剪刀"
+      },
+      "category": "tools",
+      "difficulty": 1
+  },
+  {
+      "name": "lightbulb",
+      "image": "Lightbulb",
+      "translations": {
+          "en": "Lightbulb",
+          "de": "Glühbirne",
+          "es": "Bombilla",
+          "it": "Lampadina",
+          "fr": "Ampoule",
+          "zh": "灯泡"
+      },
+      "category": "objects",
+      "difficulty": 1
+  },
+  {
+      "name": "strawberry",
+      "image": "Strawberry",
+      "translations": {
+          "en": "Strawberry",
+          "de": "Erdbeere",
+          "es": "Fresa",
+          "it": "Fragola",
+          "fr": "Fraise",
+          "zh": "草莓"
+      },
+      "category": "food",
+      "difficulty": 1
+  },
+  {
+      "name": "toothbrush",
+      "image": "Toothbrush",
+      "translations": {
+          "en": "Toothbrush",
+          "de": "Zahnbürste",
+          "es": "Cepillo de dientes",
+          "it": "Spazzolino",
+          "fr": "Brosse à dents",
+          "zh": "牙刷"
+      },
+      "category": "hygiene",
+      "difficulty": 2
+  },
+  {
+      "name": "plane",
+      "image": "Plane",
+      "translations": {
+          "en": "Plane",
+          "de": "Flugzeug",
+          "es": "Avión",
+          "it": "Aereo",
+          "fr": "Avion",
+          "zh": "飞机"
+      },
+      "category": "vehicles",
+      "difficulty": 2
+  },
+  {
+      "name": "luggage",
+      "image": "Luggage",
+      "translations": {
+          "en": "Luggage",
+          "de": "Gepäck",
+          "es": "Equipaje",
+          "it": "Bagaglio",
+          "fr": "Bagage",
+          "zh": "行李"
+      },
+      "category": "travel",
+      "difficulty": 2
+  }
+]
