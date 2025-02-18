@@ -6,11 +6,10 @@ struct SetupView: View {
     @Binding var setupComplete: Bool
     @Binding var selectLanguage: Bool
     @EnvironmentObject var settings: Settings
-    
+
     @State private var showAddWordOverlay = false // Overlay für neue Wörter
-    
     private let speechSynthesizer = AVSpeechSynthesizer() // 🔊 Text-to-Speech-Engine
-    
+
     var body: some View {
         VStack {
             // **Navigation Bar Look**
@@ -23,11 +22,11 @@ struct SetupView: View {
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.blue)
                 }
-                .padding(.leading, 16)
+                .padding(12)
 
                 Spacer()
 
-                Text("Vocabulary")
+                Text(settings.selectedLanguage)
                     .font(.system(size: 18, weight: .medium))
 
                 Spacer()
@@ -40,48 +39,51 @@ struct SetupView: View {
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.blue)
                 }
-                .padding(.trailing, 16)
+                .padding(12)
             }
-            .padding(.top, 10)
-            .padding(.bottom, 5)
             .background(
-                VisualEffectBlurView(style: .systemMaterial) // **Modernes UI mit Blur-Effekt**
+                VisualEffectBlurView(style: .systemMaterial)
                     .edgesIgnoringSafeArea(.top)
+                    .allowsHitTesting(false) // ✅ Blur-View blockiert keine Klicks mehr
             )
 
-            // **Word List**
-            ScrollView {
-                VStack(spacing: 8) { // Weniger Abstand zwischen den Zeilen
-                    ForEach(settings.items) { item in
+            // **Word List mit optimierter Breite**
+            List {
+                ForEach(settings.items) { item in
+                    HStack {
+                        // 📝 **Emoji**
+                        Text(item.emoji) // ✅ `image` → `emoji`
+                            .font(.system(size: 24))
+                            .frame(width: 40, alignment: .leading) // Konstante Breite für Gleichmäßigkeit
+                            .padding()
+
+                        // 🏷 **Übersetztes Wort**
+                        Text(item.name) // ✅ Direkte Verwendung ohne `translations`
+                            .font(.system(size: 18))
+                            .foregroundColor(.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading) // Automatische Breite
+
+                        // 🔊 **Speaker-Icon**
                         Button(action: {
-                            let translation = item.translations[String(settings.selectedLanguage.split(separator: "-").first ?? "en")] ?? "No translation"
-                            speak(translation) // 🔊 Text-to-Speech
+                            speak(item.name) // ✅ `name` statt `translations`
                         }) {
-                            HStack {
-                                Text(item.image)
-                                    .font(.system(size: 16)) // Kleinere Schriftgröße
-                                    .padding(.leading, 10)
-
-                                Spacer()
-
-                                Text(item.translations[String(settings.selectedLanguage.split(separator: "-").first ?? "en")] ?? "No translation")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.primary)
-
-                                Image(systemName: "speaker.wave.2.fill") // 🔊 Lautsprecher-Icon
-                                    .foregroundColor(.gray)
-                                    .padding(.trailing, 10)
-                            }
-                            .frame(height: 50) // Kleinere Zeilenhöhe
-                            .background(Color(.systemGray5)) // **Mehr Kontrast im Light Mode**
-                            .cornerRadius(10)
+                            Image(systemName: "speaker.wave.2.fill")
+                                .foregroundColor(.gray)
+                                .font(.system(size: 18))
                         }
-                        .buttonStyle(.plain)
-                        .padding(.horizontal)
+                        .padding(.trailing, 8) // Weniger Abstand zum Rand
+                    }
+                    .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)) // **Weniger Rand**
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            deleteItem(item)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
                     }
                 }
-                .padding(.top, 5)
             }
+            .listStyle(.insetGrouped) // **Apple-Style**
             
             Spacer()
 
@@ -106,14 +108,18 @@ struct SetupView: View {
             AddWordView(isPresented: $showAddWordOverlay, settings: settings)
         )
     }
-    
+
     // **🔊 Text-to-Speech**
     private func speak(_ text: String) {
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: settings.selectedLanguage)
         utterance.rate = 0.5
-        
         speechSynthesizer.speak(utterance)
+    }
+
+    // **🗑 Löschen eines Elements**
+    private func deleteItem(_ item: Item) {
+        settings.items.removeAll { $0.id == item.id }
     }
 }
 

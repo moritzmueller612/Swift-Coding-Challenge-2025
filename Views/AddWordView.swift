@@ -6,8 +6,9 @@ struct AddWordView: View {
     @Binding var isPresented: Bool
     @ObservedObject var settings: Settings
 
-    @State private var newWord = "" // Eingabewort
-    @State private var translatedWord = "" // Übersetztes Wort
+    @State private var newWord = ""           // Eingabe-Wort
+    @State private var translatedWord = ""    // Automatische Übersetzung
+    @State private var emoji = ""             // Emoji für das Wort
     @State private var configuration: TranslationSession.Configuration?
 
     var body: some View {
@@ -15,56 +16,76 @@ struct AddWordView: View {
             VStack {
                 Spacer()
 
-                VStack(spacing: 20) {
+                VStack(spacing: 16) {
+                    // 🏷 **Titel**
                     Text("Add New Word")
                         .font(.headline)
                         .padding(.top, 10)
 
                     // **🌍 Eingabefeld für das Original-Wort**
                     TextField("Enter word...", text: $newWord)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding()
+                        .textFieldStyle(.roundedBorder)
+                        .padding(.horizontal)
+                        .autocapitalization(.none)
+
+                    // **🎯 Übersetzung + Emoji in einer Reihe**
+                    HStack {
+                        // **Automatische Übersetzung**
+                        TextField("Translation...", text: $translatedWord)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(maxWidth: .infinity)
+                            .autocapitalization(.none)
+
+                        // **Emoji-Eingabe**
+                        TextField("Emoji", text: $emoji)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 60)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal)
 
                     // **🔄 Übersetzungs-Button**
-                    Button("Translate") {
+                    Button(action: {
                         triggerTranslation()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue.opacity(0.8))
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-
-                    // **🎯 Übersetztes Wort anzeigen**
-                    Text(translatedWord)
-                        .font(.title2)
-                        .foregroundColor(.gray)
-
-                    HStack {
-                        // ❌ **Abbrechen-Button**
-                        Button("Cancel") {
-                            isPresented = false
-                            newWord = ""
+                    }) {
+                        HStack {
+                            Image(systemName: "globe")
+                            Text("Translate")
                         }
-                        .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.3))
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
+                    .padding(.horizontal)
+
+                    // **🟢 & ❌ Action Buttons**
+                    HStack {
+                        // ❌ **Cancel**
+                        Button("Cancel") {
+                            resetFields()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
                         .cornerRadius(8)
 
-                        // ✅ **Hinzufügen-Button**
+                        // ✅ **Add**
                         Button("Add") {
                             addNewWord()
                         }
-                        .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.green)
+                        .padding()
+                        .background(newWord.isEmpty || translatedWord.isEmpty || emoji.isEmpty ? Color.gray : Color.green)
                         .foregroundColor(.white)
                         .cornerRadius(8)
-                        .disabled(newWord.isEmpty || translatedWord.isEmpty) // Verhindert leere Einträge
+                        .disabled(newWord.isEmpty || translatedWord.isEmpty || emoji.isEmpty)
                     }
+                    .padding(.horizontal)
                 }
                 .padding()
-                .background(Color.white)
+                .background(Color(.systemBackground))
                 .cornerRadius(12)
                 .shadow(radius: 5)
                 .padding(40)
@@ -72,11 +93,11 @@ struct AddWordView: View {
                 Spacer()
             }
             .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all))
-            // 🎯 **Übersetzung durchführen, sobald `configuration` gesetzt ist**
+            // **Automatische Übersetzung über `TranslationSession`**
             .translationTask(configuration) { session in
                 do {
                     let response = try await session.translate(newWord)
-                    translatedWord = response.targetText // Speichert die korrekte Übersetzung
+                    translatedWord = response.targetText // Automatisch speichern
                 } catch {
                     print("Translation failed: \(error)")
                 }
@@ -84,35 +105,39 @@ struct AddWordView: View {
         }
     }
 
-    // 🌍 **Trigger Übersetzung**
+    // **🌍 Übersetzungs-Logik starten**
     private func triggerTranslation() {
         guard configuration == nil else {
             configuration?.invalidate()
             return
         }
 
-        // 💡 Sprache explizit setzen:
         let sourceLang = "en" // Standard-Eingabesprache
-        let targetLang = settings.selectedLanguage // Gewählte Sprache des Nutzers
+        let targetLang = settings.selectedLanguage // Gewählte Sprache
 
         configuration = .init(source: Locale.Language(identifier: sourceLang),
                               target: Locale.Language(identifier: targetLang))
     }
 
-    // **📌 Wort speichern**
+    // **✅ Wort speichern**
     private func addNewWord() {
-        guard !newWord.isEmpty, !translatedWord.isEmpty else { return }
+        guard !newWord.isEmpty, !translatedWord.isEmpty, !emoji.isEmpty else { return }
 
         let newItem = Item(
             id: UUID(),
             name: newWord,
-            image: newWord.capitalized,
-            translations: [settings.selectedLanguage: translatedWord] // Richtig übersetzt speichern
+            emoji: emoji
         )
 
         settings.items.append(newItem)
-        newWord = "" // Eingabe zurücksetzen
+        resetFields()
+    }
+
+    // **🔄 Felder zurücksetzen**
+    private func resetFields() {
+        newWord = ""
         translatedWord = ""
+        emoji = ""
         isPresented = false
     }
 }

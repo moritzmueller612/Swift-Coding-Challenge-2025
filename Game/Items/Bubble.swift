@@ -25,7 +25,7 @@ class Bubble: SKShapeNode {
         
         updatePath(forPercentage: 1.0)
         self.position = CGPoint(x: CGFloat.random(in: radius...(sceneSize.width - radius * 2)), y: -radius)
-        self.strokeColor = .blue
+        self.strokeColor = UIColor.blue
         self.lineWidth = 5.0
         self.fillColor = .white
         
@@ -39,10 +39,13 @@ class Bubble: SKShapeNode {
     }
     
     private func renderItem(randomItem: Item, radius: CGFloat) {
-        let itemImage = SKSpriteNode(imageNamed: randomItem.image)
-        itemImage.size = CGSize(width: radius * 1.5, height: radius * 1.5)
-        itemImage.position = CGPoint(x: 0, y: 0)
-        addChild(itemImage)
+        let emojiNode = SKLabelNode(text: randomItem.emoji) // Verwende das Emoji als Text
+        emojiNode.fontSize = radius * 1.2 // Skalierung des Emojis basierend auf dem Radius
+        emojiNode.verticalAlignmentMode = .center // Zentrieren
+        emojiNode.horizontalAlignmentMode = .center
+        emojiNode.position = CGPoint(x: 0, y: 0)
+        
+        addChild(emojiNode)
     }
     
     private func moveUp(sceneSize: CGSize) {
@@ -81,7 +84,7 @@ class Bubble: SKShapeNode {
     }
     
     func updateRecognizedText(newText: String) {
-        let correctAnswer = correctItem.translations[String(settings.selectedLanguage.split(separator: "-").first ?? "en")] ?? "Keine Sprache eingestellt"
+        let correctAnswer = correctItem.name
         print("Correct Word: \(correctAnswer)")
         
         recognizedText = newText
