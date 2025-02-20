@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFAudio
 import SpriteKit
 
 struct GameView: View {
@@ -29,7 +30,10 @@ struct GameView: View {
                             }
                         }
                     }
-                
+                    .onDisappear {
+                        speechRecognizer.stopListening()
+                        speechRecognizer.reset()
+                    }
                 VStack {
                     HStack {
                         // ❌ **Zurück-Button**

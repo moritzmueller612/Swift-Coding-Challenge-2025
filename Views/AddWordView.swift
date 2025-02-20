@@ -15,63 +15,54 @@ struct AddWordView: View {
         if isPresented {
             VStack {
                 Spacer()
-
-                VStack(spacing: 16) {
-                    // 🏷 **Titel**
-                    Text("Add New Word")
-                        .font(.headline)
-                        .padding(.top, 10)
-
-                    // **🌍 Eingabefeld für das Original-Wort**
-                    TextField("Enter word...", text: $newWord)
-                        .textFieldStyle(.roundedBorder)
-                        .padding(.horizontal)
-                        .autocapitalization(.none)
-
-                    // **🎯 Übersetzung + Emoji in einer Reihe**
-                    HStack {
-                        // **Automatische Übersetzung**
-                        TextField("Translation...", text: $translatedWord)
+                
+                // ZStack, um den Inhalt und den "X"-Button übereinander zu legen
+                ZStack(alignment: .topTrailing) {
+                    VStack(spacing: 16) {
+                        // 🏷 **Titel**
+                        Text("Add New Word")
+                            .font(.headline)
+                            .padding(.top, 30) // Extra Platz, damit das "X" nicht überlappt
+                        
+                        // **🌍 Eingabefeld für das Original-Wort**
+                        TextField("Enter word...", text: $newWord)
                             .textFieldStyle(.roundedBorder)
-                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal)
                             .autocapitalization(.none)
-
-                        // **Emoji-Eingabe**
-                        TextField("Emoji", text: $emoji)
-                            .textFieldStyle(.roundedBorder)
-                            .frame(width: 60)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.horizontal)
-
-                    // **🔄 Übersetzungs-Button**
-                    Button(action: {
-                        triggerTranslation()
-                    }) {
+                        
+                        // **🔄 Übersetzungs-Button**
+                        Button(action: {
+                            triggerTranslation()
+                        }) {
+                            HStack {
+                                Image(systemName: "globe")
+                                Text("Translate")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                        }
+                        .padding(.horizontal)
+                        
+                        // **🎯 Übersetzung + Emoji in einer Reihe**
                         HStack {
-                            Image(systemName: "globe")
-                            Text("Translate")
+                            // **Automatische Übersetzung**
+                            TextField("Translation...", text: $translatedWord)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(maxWidth: .infinity)
+                                .autocapitalization(.none)
+                            
+                            // **Emoji-Eingabe**
+                            TextField("Emoji", text: $emoji)
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 60)
+                                .multilineTextAlignment(.center)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                    }
-                    .padding(.horizontal)
-
-                    // **🟢 & ❌ Action Buttons**
-                    HStack {
-                        // ❌ **Cancel**
-                        Button("Cancel") {
-                            resetFields()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-
-                        // ✅ **Add**
+                        .padding(.horizontal)
+                        
+                        // **🟢 Action Button "Add"**
                         Button("Add") {
                             addNewWord()
                         }
@@ -81,15 +72,24 @@ struct AddWordView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                         .disabled(newWord.isEmpty || translatedWord.isEmpty || emoji.isEmpty)
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 5)
+                    
+                    // **❌ "X"-Button oben rechts**
+                    Button(action: {
+                        resetFields()
+                    }) {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.gray)
+                            .padding(10)
+                    }
                 }
-                .padding()
-                .background(Color(.systemBackground))
-                .cornerRadius(12)
-                .shadow(radius: 5)
                 .padding(40)
-
+                
                 Spacer()
             }
             .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all))
@@ -119,17 +119,17 @@ struct AddWordView: View {
                               target: Locale.Language(identifier: targetLang))
     }
 
-    // **✅ Wort speichern**
     private func addNewWord() {
-        guard !newWord.isEmpty, !translatedWord.isEmpty, !emoji.isEmpty else { return }
+        guard !newWord.isEmpty, !translatedWord.isEmpty else { return }
 
         let newItem = Item(
             id: UUID(),
-            name: newWord,
+            word: newWord,
+            translation: translatedWord,
             emoji: emoji
         )
 
-        settings.items.append(newItem)
+        settings.items.append(newItem) // ✅ Direkt ins Array speichern
         resetFields()
     }
 

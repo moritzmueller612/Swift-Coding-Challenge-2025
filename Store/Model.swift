@@ -4,13 +4,15 @@ import Foundation
 // 🏷 Modell für ein einzelnes Wort
 struct Item: Codable, Identifiable {
     var id: UUID = UUID() // ✅ Automatisch generierte UUID
-    let name: String
+    let word: String
+    let translation: String
     let emoji: String
 
     // ✅ Custom Initializer, um `id` beim Decoding zu setzen
-    init(id: UUID, name: String, emoji: String) {
+    init(id: UUID, word: String, translation: String, emoji: String) {
         self.id = UUID()
-        self.name = name
+        self.word = word
+        self.translation = translation
         self.emoji = emoji
     }
 
@@ -18,13 +20,15 @@ struct Item: Codable, Identifiable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = UUID() // ✅ Generiere eine neue UUID
-        self.name = try container.decode(String.self, forKey: .name)
+        self.word = try container.decode(String.self, forKey: .word)
+        self.translation = try container.decode(String.self, forKey: .translation)
         self.emoji = try container.decode(String.self, forKey: .emoji)
     }
 }
 // 📚 Modell für eine Sprache mit Name + Wörter
 struct Language: Codable {
     let name: String
+    let flag: String
     let words: [Item]
 }
 

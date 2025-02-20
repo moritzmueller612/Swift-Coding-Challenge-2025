@@ -84,7 +84,7 @@ class Bubble: SKShapeNode {
     }
     
     func updateRecognizedText(newText: String) {
-        let correctAnswer = correctItem.name
+        let correctAnswer = correctItem.translation
         print("Correct Word: \(correctAnswer)")
         
         recognizedText = newText

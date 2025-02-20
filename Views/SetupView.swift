@@ -26,7 +26,7 @@ struct SetupView: View {
 
                 Spacer()
 
-                Text(settings.selectedLanguage)
+                Text("\(settings.selectedFlag)")
                     .font(.system(size: 18, weight: .medium))
 
                 Spacer()
@@ -51,29 +51,33 @@ struct SetupView: View {
             List {
                 ForEach(settings.items) { item in
                     HStack {
-                        // 📝 **Emoji**
-                        Text(item.emoji) // ✅ `image` → `emoji`
-                            .font(.system(size: 24))
-                            .frame(width: 40, alignment: .leading) // Konstante Breite für Gleichmäßigkeit
-                            .padding()
-
-                        // 🏷 **Übersetztes Wort**
-                        Text(item.name) // ✅ Direkte Verwendung ohne `translations`
-                            .font(.system(size: 18))
-                            .foregroundColor(.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading) // Automatische Breite
-
-                        // 🔊 **Speaker-Icon**
-                        Button(action: {
-                            speak(item.name) // ✅ `name` statt `translations`
-                        }) {
-                            Image(systemName: "speaker.wave.2.fill")
-                                .foregroundColor(.gray)
+                        // **Links: Emoji + Englisches Wort**
+                        HStack {
+                            Text(item.emoji) // ✅ Emoji
+                                .font(.system(size: 24))
+                            Text(item.word) // ✅ Originalwort (Englisch)
                                 .font(.system(size: 18))
+                                .foregroundColor(.gray)
                         }
-                        .padding(.trailing, 8) // Weniger Abstand zum Rand
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        // **Rechts: Übersetztes Wort + Speaker**
+                        HStack {
+                            Text(item.translation) // ✅ Übersetztes Wort
+                                .font(.system(size: 18))
+                                .foregroundColor(.primary)
+
+                            Button(action: {
+                                speak(item.translation) // ✅ Vorlesen
+                            }) {
+                                Image(systemName: "speaker.wave.2.fill")
+                                    .foregroundColor(.gray)
+                                    .font(.system(size: 18))
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)) // **Weniger Rand**
+                    .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) {
                             deleteItem(item)
@@ -111,6 +115,7 @@ struct SetupView: View {
 
     // **🔊 Text-to-Speech**
     private func speak(_ text: String) {
+        speechSynthesizer.stopSpeaking(at: .immediate)
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: settings.selectedLanguage)
         utterance.rate = 0.5
@@ -120,6 +125,12 @@ struct SetupView: View {
     // **🗑 Löschen eines Elements**
     private func deleteItem(_ item: Item) {
         settings.items.removeAll { $0.id == item.id }
+    }
+    
+    // **🔄 Hol das englische Wort zur Übersetzung**
+    private func getEnglishWord(for translatedWord: String) -> String {
+        let englishEntry = settings.items.first { $0.translation == translatedWord }
+        return englishEntry?.word ?? "Unknown"
     }
 }
 

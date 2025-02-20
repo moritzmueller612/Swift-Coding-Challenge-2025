@@ -7,7 +7,7 @@ class SpeechRecognizer: ObservableObject {
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AVAudioEngine()
+    private var audioEngine = AVAudioEngine()
     private var settings: Settings
     
     var onResult: ((String) -> Void)?
@@ -108,6 +108,27 @@ class SpeechRecognizer: ObservableObject {
         recognitionRequest = nil
         DispatchQueue.main.async {
             self.isRecording = false
+        }
+    }
+    
+    func reset() {
+        audioEngine.stop()
+        audioEngine.inputNode.removeTap(onBus: 0)
+        
+        recognitionRequest?.endAudio()
+        recognitionTask?.cancel()
+        
+        recognitionTask = nil
+        recognitionRequest = nil
+        audioEngine = AVAudioEngine()
+        
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.ambient, mode: .default, options: [])
+            try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            print("🔇 Audio session successfully reset.")
+        } catch {
+            print("❌ Error resetting audio session: \(error)")
         }
     }
     

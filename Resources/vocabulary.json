@@ -2,107 +2,114 @@
   "languages": {
     "en-US": {
       "name": "English",
+      "flag": "🇺🇸",
       "words": [
-        { "name": "Car", "emoji": "🚗" },
-        { "name": "Bed", "emoji": "🛏️" },
-        { "name": "Pencil", "emoji": "✏️" },
-        { "name": "Turtle", "emoji": "🐢" },
-        { "name": "Scissors", "emoji": "✂️" },
-        { "name": "Lightbulb", "emoji": "💡" },
-        { "name": "Strawberry", "emoji": "🍓" },
-        { "name": "Toothbrush", "emoji": "🪥" },
-        { "name": "Plane", "emoji": "✈️" },
-        { "name": "Luggage", "emoji": "🧳" }
+        { "word": "Car", "translation": "Car", "emoji": "🚗" },
+        { "word": "Bed", "translation": "Bed", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "Pencil", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "Turtle", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "Scissors", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "Lightbulb", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "Strawberry", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "Toothbrush", "emoji": "🪥" },
+        { "word": "Plane", "translation": "Plane", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "Luggage", "emoji": "🧳" }
       ]
     },
     "de-DE": {
       "name": "Deutsch",
+      "flag": "🇩🇪",
       "words": [
-        { "name": "Auto", "emoji": "🚗" },
-        { "name": "Bett", "emoji": "🛏️" },
-        { "name": "Bleistift", "emoji": "✏️" },
-        { "name": "Schildkröte", "emoji": "🐢" },
-        { "name": "Schere", "emoji": "✂️" },
-        { "name": "Glühbirne", "emoji": "💡" },
-        { "name": "Erdbeere", "emoji": "🍓" },
-        { "name": "Zahnbürste", "emoji": "🪥" },
-        { "name": "Flugzeug", "emoji": "✈️" },
-        { "name": "Gepäck", "emoji": "🧳" }
+        { "word": "Car", "translation": "Auto", "emoji": "🚗" },
+        { "word": "Bed", "translation": "Bett", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "Bleistift", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "Schildkröte", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "Schere", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "Glühbirne", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "Erdbeere", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "Zahnbürste", "emoji": "🪥" },
+        { "word": "Plane", "translation": "Flugzeug", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "Gepäck", "emoji": "🧳" }
       ]
     },
     "es-ES": {
       "name": "Español",
+      "flag": "🇪🇸",
       "words": [
-        { "name": "Coche", "emoji": "🚗" },
-        { "name": "Cama", "emoji": "🛏️" },
-        { "name": "Lápiz", "emoji": "✏️" },
-        { "name": "Tortuga", "emoji": "🐢" },
-        { "name": "Tijeras", "emoji": "✂️" },
-        { "name": "Bombilla", "emoji": "💡" },
-        { "name": "Fresa", "emoji": "🍓" },
-        { "name": "Cepillo de dientes", "emoji": "🪥" },
-        { "name": "Avión", "emoji": "✈️" },
-        { "name": "Equipaje", "emoji": "🧳" }
+        { "word": "Car", "translation": "Coche", "emoji": "🚗" },
+        { "word": "Bed", "translation": "Cama", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "Lápiz", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "Tortuga", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "Tijeras", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "Bombilla", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "Fresa", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "Cepillo de dientes", "emoji": "🪥" },
+        { "word": "Plane", "translation": "Avión", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "Equipaje", "emoji": "🧳" }
       ]
     },
     "it-IT": {
       "name": "Italiano",
+      "flag": "🇮🇹",
       "words": [
-        { "name": "Macchina", "emoji": "🚗" },
-        { "name": "Letto", "emoji": "🛏️" },
-        { "name": "Matita", "emoji": "✏️" },
-        { "name": "Tartaruga", "emoji": "🐢" },
-        { "name": "Forbici", "emoji": "✂️" },
-        { "name": "Lampadina", "emoji": "💡" },
-        { "name": "Fragola", "emoji": "🍓" },
-        { "name": "Spazzolino", "emoji": "🪥" },
-        { "name": "Aereo", "emoji": "✈️" },
-        { "name": "Bagaglio", "emoji": "🧳" }
+        { "word": "Car", "translation": "Macchina", "emoji": "🚗" },
+        { "word": "Bed", "translation": "Letto", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "Matita", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "Tartaruga", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "Forbici", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "Lampadina", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "Fragola", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "Spazzolino", "emoji": "🪥" },
+        { "word": "Plane", "translation": "Aereo", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "Bagaglio", "emoji": "🧳" }
       ]
     },
     "fr-FR": {
       "name": "Français",
+      "flag": "🇫🇷",
       "words": [
-        { "name": "Voiture", "emoji": "🚗" },
-        { "name": "Lit", "emoji": "🛏️" },
-        { "name": "Crayon", "emoji": "✏️" },
-        { "name": "Tortue", "emoji": "🐢" },
-        { "name": "Ciseaux", "emoji": "✂️" },
-        { "name": "Ampoule", "emoji": "💡" },
-        { "name": "Fraise", "emoji": "🍓" },
-        { "name": "Brosse à dents", "emoji": "🪥" },
-        { "name": "Avion", "emoji": "✈️" },
-        { "name": "Bagage", "emoji": "🧳" }
+        { "word": "Car", "translation": "Voiture", "emoji": "🚗" },
+        { "word": "Bed", "translation": "Lit", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "Crayon", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "Tortue", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "Ciseaux", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "Ampoule", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "Fraise", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "Brosse à dents", "emoji": "🪥" },
+        { "word": "Plane", "translation": "Avion", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "Bagage", "emoji": "🧳" }
       ]
     },
     "zh-CN": {
       "name": "中文",
+      "flag": "🇨🇳",
       "words": [
-        { "name": "汽车", "emoji": "🚗" },
-        { "name": "床", "emoji": "🛏️" },
-        { "name": "铅笔", "emoji": "✏️" },
-        { "name": "乌龟", "emoji": "🐢" },
-        { "name": "剪刀", "emoji": "✂️" },
-        { "name": "灯泡", "emoji": "💡" },
-        { "name": "草莓", "emoji": "🍓" },
-        { "name": "牙刷", "emoji": "🪥" },
-        { "name": "飞机", "emoji": "✈️" },
-        { "name": "行李", "emoji": "🧳" }
+        { "word": "Car", "translation": "汽车", "emoji": "🚗" },
+        { "word": "Bed", "translation": "床", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "铅笔", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "乌龟", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "剪刀", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "灯泡", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "草莓", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "牙刷", "emoji": "🪥" },
+        { "word": "Plane", "translation": "飞机", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "行李", "emoji": "🧳" }
       ]
     },
     "sv-SE": {
       "name": "Svenska",
+      "flag": "🇸🇪",
       "words": [
-        { "name": "Bil", "emoji": "🚗" },
-        { "name": "Säng", "emoji": "🛏️" },
-        { "name": "Blyertspenna", "emoji": "✏️" },
-        { "name": "Sköldpadda", "emoji": "🐢" },
-        { "name": "Sax", "emoji": "✂️" },
-        { "name": "Glödlampa", "emoji": "💡" },
-        { "name": "Jordgubbe", "emoji": "🍓" },
-        { "name": "Tandborste", "emoji": "🪥" },
-        { "name": "Flygplan", "emoji": "✈️" },
-        { "name": "Bagage", "emoji": "🧳" }
+        { "word": "Car", "translation": "Bil", "emoji": "🚗" },
+        { "word": "Bed", "translation": "Säng", "emoji": "🛏️" },
+        { "word": "Pencil", "translation": "Blyertspenna", "emoji": "✏️" },
+        { "word": "Turtle", "translation": "Sköldpadda", "emoji": "🐢" },
+        { "word": "Scissors", "translation": "Sax", "emoji": "✂️" },
+        { "word": "Lightbulb", "translation": "Glödlampa", "emoji": "💡" },
+        { "word": "Strawberry", "translation": "Jordgubbe", "emoji": "🍓" },
+        { "word": "Toothbrush", "translation": "Tandborste", "emoji": "🪥" },
+        { "word": "Plane", "translation": "Flygplan", "emoji": "✈️" },
+        { "word": "Luggage", "translation": "Bagage", "emoji": "🧳" }
       ]
     }
   }

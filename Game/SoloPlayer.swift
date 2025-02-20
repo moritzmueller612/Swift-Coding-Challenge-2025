@@ -9,7 +9,7 @@ class SoloPlayer: SKScene {
     var onCorrectAnswer: (() -> Void)?
     
     override func didMove(to view: SKView) {
-        self.backgroundColor = .systemBackground
+        self.backgroundColor = .white
         
         guard let speechRecognizer = speechRecognizer else {
             print("Speech Recognition not available")
