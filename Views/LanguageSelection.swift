@@ -22,7 +22,8 @@ struct LanguageSelection: View {
                 spacing: 12
             ) {
                 ForEach(settings.availableLanguages.keys.sorted(), id: \.self) { languageCode in
-                    if let language = settings.availableLanguages[languageCode] {
+                    if let language = settings.availableLanguages[languageCode],
+                       !languageCode.contains(settings.systemLanguage) { // ❌ System-Sprache ausblenden
                         Button(action: {
                             settings.selectedLanguage = languageCode
                         }) {

@@ -1,6 +1,6 @@
 {
   "languages": {
-    "en-US": {
+    "en": {
       "name": "English",
       "flag": "🇺🇸",
       "words": [
@@ -16,7 +16,7 @@
         { "word": "Luggage", "translation": "Luggage", "emoji": "🧳" }
       ]
     },
-    "de-DE": {
+    "de": {
       "name": "Deutsch",
       "flag": "🇩🇪",
       "words": [
@@ -32,7 +32,7 @@
         { "word": "Luggage", "translation": "Gepäck", "emoji": "🧳" }
       ]
     },
-    "es-ES": {
+    "es": {
       "name": "Español",
       "flag": "🇪🇸",
       "words": [
@@ -48,7 +48,7 @@
         { "word": "Luggage", "translation": "Equipaje", "emoji": "🧳" }
       ]
     },
-    "it-IT": {
+    "it": {
       "name": "Italiano",
       "flag": "🇮🇹",
       "words": [
@@ -64,7 +64,7 @@
         { "word": "Luggage", "translation": "Bagaglio", "emoji": "🧳" }
       ]
     },
-    "fr-FR": {
+    "fr": {
       "name": "Français",
       "flag": "🇫🇷",
       "words": [
@@ -80,7 +80,7 @@
         { "word": "Luggage", "translation": "Bagage", "emoji": "🧳" }
       ]
     },
-    "zh-CN": {
+    "zh": {
       "name": "中文",
       "flag": "🇨🇳",
       "words": [
@@ -96,7 +96,7 @@
         { "word": "Luggage", "translation": "行李", "emoji": "🧳" }
       ]
     },
-    "sv-SE": {
+    "sv": {
       "name": "Svenska",
       "flag": "🇸🇪",
       "words": [

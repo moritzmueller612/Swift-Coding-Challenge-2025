@@ -26,7 +26,7 @@ struct SetupView: View {
 
                 Spacer()
 
-                Text("\(settings.selectedFlag)")
+                Text("\(settings.selectedFlag) \(settings.availableLanguages[settings.selectedLanguage]?.name ?? "")")
                     .font(.system(size: 18, weight: .medium))
 
                 Spacer()
@@ -51,11 +51,13 @@ struct SetupView: View {
             List {
                 ForEach(settings.items) { item in
                     HStack {
-                        // **Links: Emoji + Englisches Wort**
+                        // **Links: Emoji + Wort in der System-Sprache**
                         HStack {
                             Text(item.emoji) // ✅ Emoji
                                 .font(.system(size: 24))
-                            Text(item.word) // ✅ Originalwort (Englisch)
+
+                            // 🔍 **Das Wort in der System-Sprache finden**
+                            Text(getSystemLanguageWord(for: item.word))
                                 .font(.system(size: 18))
                                 .foregroundColor(.gray)
                         }
@@ -113,6 +115,23 @@ struct SetupView: View {
         )
     }
 
+    // **🔍 Hol das Wort in der System-Sprache**
+    // **🔍 Hol das Wort in der System-Sprache**
+    private func getSystemLanguageWord(for englishWord: String) -> String {
+        guard let systemLangWords = settings.availableLanguages[settings.systemLanguage]?.words else {
+            print("⚠️ System-Sprache nicht gefunden:", settings.systemLanguage)
+            return "Unknown" // ❌ Falls die Sprache nicht existiert
+        }
+
+        // **Wort in der System-Sprache suchen**
+        if let wordEntry = systemLangWords.first(where: { $0.word == englishWord }) {
+            return wordEntry.translation
+        } else {
+            print("❌ Kein Eintrag gefunden für: \(englishWord)")
+        }
+
+        return "Unknown" // ❌ Falls kein Eintrag gefunden wurde
+    }
     // **🔊 Text-to-Speech**
     private func speak(_ text: String) {
         speechSynthesizer.stopSpeaking(at: .immediate)
@@ -125,12 +144,6 @@ struct SetupView: View {
     // **🗑 Löschen eines Elements**
     private func deleteItem(_ item: Item) {
         settings.items.removeAll { $0.id == item.id }
-    }
-    
-    // **🔄 Hol das englische Wort zur Übersetzung**
-    private func getEnglishWord(for translatedWord: String) -> String {
-        let englishEntry = settings.items.first { $0.translation == translatedWord }
-        return englishEntry?.word ?? "Unknown"
     }
 }
 

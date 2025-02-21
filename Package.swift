@@ -8,20 +8,20 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Meine App",
+    name: "Vocabulary Game",
     platforms: [
         .iOS("18.0")
     ],
     products: [
         .iOSApplication(
-            name: "Meine App",
+            name: "Vocabulary Game",
             targets: ["AppModule"],
-            bundleIdentifier: "mm.myApp4",
+            bundleIdentifier: "mm.vocabularyGame",
             teamIdentifier: "MZD4AGLY32",
-            displayVersion: "1.0",
+            displayVersion: "0.1",
             bundleVersion: "1",
             appIcon: .placeholder(icon: .earth),
-            accentColor: .presetColor(.cyan),
+            accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -33,9 +33,10 @@ let package = Package(
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
             ],
             capabilities: [
-                .microphone(purposeString: "test"),
-                .speechRecognition(purposeString: "test")
-            ]
+                .microphone(purposeString: "This app requires access to the microphone to enable voice-based interactions. Your voice input is used to recognize and verify spoken vocabulary words."),
+                .speechRecognition(purposeString: "This app uses speech recognition to analyze your spoken words and provide feedback on pronunciation.")
+            ],
+            appCategory: .education
         )
     ],
     targets: [

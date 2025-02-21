@@ -16,7 +16,7 @@ class SoloPlayer: SKScene {
             return
         }
         
-        guard let settings = settings else {
+        guard settings != nil else {
             print("Settings not available")
             return
         }
