@@ -10,7 +10,7 @@ struct GameView: View {
     
     init(settings: Settings, setupComplete: Binding<Bool>) {
         _setupComplete = setupComplete
-        _speechRecognizer = StateObject(wrappedValue: SpeechRecognizer(settings: settings)) // ✅ Konstruktor bleibt!
+        _speechRecognizer = StateObject(wrappedValue: SpeechRecognizer(settings: settings))
     }
     
     var body: some View {
@@ -34,9 +34,17 @@ struct GameView: View {
                         speechRecognizer.stopListening()
                         speechRecognizer.reset()
                     }
+                
+                // **OBERE LEISTE (Score & Schließen-Button)**
                 VStack {
                     HStack {
-                        // ❌ **Zurück-Button**
+                        Text("Score: \(score)")
+                            .font(.headline)
+                            .padding()
+                            .foregroundColor(.black)
+                        
+                        Spacer()
+                        
                         Button(action: {
                             setupComplete = false // Zurück zur SetupView
                         }) {
@@ -47,26 +55,21 @@ struct GameView: View {
                                 .foregroundColor(.red)
                                 .padding()
                         }
-                        
-                        Spacer()
-                        
-                        Text("Score: \(score)")
-                            .font(.headline)
-                            .padding()
-                            .foregroundColor(.black)
-                        
-                        Spacer()
-                        
-                        Text("Tap the Bubbles and say the words")
-                            .foregroundColor(.black)
-                        
-                        Spacer()
                     }
+                    .padding(.horizontal)
+                    
                     Spacer()
+                    
+                    // **INFO TEXT UNTEN MITTE**
+                    Text("Tap the Bubbles and say the words")
+                        .foregroundColor(.black)
+                        .font(.subheadline)
+                        .padding(.bottom, 40)
                 }
             }
         }
         .onAppear {
+            configureAudioSession()
             speechRecognizer.startListening()
         }
         .onDisappear {
@@ -88,6 +91,15 @@ struct GameView: View {
     
     private func increaseScore() {
         score += 1
-        print("Score increased to \(score)")
+    }
+    
+    private func configureAudioSession() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playback, mode: .default, options: [])
+            try audioSession.setActive(true)
+        } catch {
+            print(error)
+        }
     }
 }

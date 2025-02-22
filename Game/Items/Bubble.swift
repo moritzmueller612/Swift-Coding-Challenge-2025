@@ -3,14 +3,14 @@ import SpriteKit
 class Bubble: SKShapeNode {
     private let radius: CGFloat
     private var recognizedText: String = ""
-    private var isCorrect = false // Neu: Speichert, ob die Antwort richtig war
+    private var isCorrect = false // Speichert, ob die Antwort richtig war
     private let correctItem: Item
     private weak var speechRecognizer: SpeechRecognizer?
     private var onCorrectAnswer: (() -> Void)?
     private let settings: Settings
     
     init(sceneSize: CGSize, radius: CGFloat, settings: Settings, speechRecognizer: SpeechRecognizer, onCorrectAnswer: (() -> Void)?) {
-        guard let randomItem = settings.items.randomElement() else {
+        guard let randomItem = settings.targetItems.randomElement() else {
             fatalError("No visible items available in settings")
         }
         
@@ -31,7 +31,6 @@ class Bubble: SKShapeNode {
         
         renderItem(randomItem: randomItem, radius: radius)
         moveUp(sceneSize: sceneSize)
-        displayRecognizedText()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -39,9 +38,9 @@ class Bubble: SKShapeNode {
     }
     
     private func renderItem(randomItem: Item, radius: CGFloat) {
-        let emojiNode = SKLabelNode(text: randomItem.emoji) // Verwende das Emoji als Text
-        emojiNode.fontSize = radius * 1.2 // Skalierung des Emojis basierend auf dem Radius
-        emojiNode.verticalAlignmentMode = .center // Zentrieren
+        let emojiNode = SKLabelNode(text: randomItem.emoji)
+        emojiNode.fontSize = radius * 1.2
+        emojiNode.verticalAlignmentMode = .center
         emojiNode.horizontalAlignmentMode = .center
         emojiNode.position = CGPoint(x: 0, y: 0)
         
@@ -84,101 +83,130 @@ class Bubble: SKShapeNode {
     }
     
     func updateRecognizedText(newText: String) {
-        let correctAnswer = correctItem.translation
-        print("Correct Word: \(correctAnswer)")
+        guard !isCorrect else { return } // Falls bereits korrekt, nichts ändern
         
+        let correctAnswer = correctItem.translation
         recognizedText = newText
-        displayRecognizedText()
+        displayRecognizedText() // 🔹 Zeigt das gesprochene Wort weiterhin an
         
         if newText.lowercased().contains(correctAnswer.lowercased()) {
-            onCorrectAnswer?()
-            print("✅ Correct answer!")
-            
             isCorrect = true // Bubble bleibt stehen
+            onCorrectAnswer?() // Score erhöhen
             
-            if let existingItemImage = childNode(withName: "itemImage") as? SKSpriteNode {
-                existingItemImage.removeFromParent()
-            }
+            showCorrectAnswerFeedback() // ✅ Emoji + Korrektes Wort anzeigen
             
-            let checkmark = SKSpriteNode(imageNamed: "right")
-            checkmark.size = CGSize(width: radius * 1.5, height: radius * 1.5)
-            checkmark.position = CGPoint(x: 0, y: 0)
-            checkmark.name = "checkmark"
-            addChild(checkmark)
-            
-            let wait = SKAction.wait(forDuration: 0.5)
-            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+            // 🌟 Animation: Langsames Verblassen der gesamten Bubble
+            let wait = SKAction.wait(forDuration: 1.0)
+            let fadeOut = SKAction.fadeOut(withDuration: 1.0)
             let remove = SKAction.removeFromParent()
-            
-            self.run(SKAction.sequence([wait, fadeOut, remove])) // Bubble verschwindet
+            self.run(SKAction.sequence([wait, fadeOut, remove])) // Bubble verschwindet langsam
         }
     }
     
-    private func updatePath(forPercentage percentage: CGFloat) {
-        let startAngle: CGFloat = CGFloat.pi / 2 // Start bei 12 Uhr
-        let endAngle: CGFloat = startAngle - (CGFloat.pi * 2 * percentage) // Gegen den Uhrzeigersinn
+    private func showCorrectAnswerFeedback() {
+        // 🔹 Entferne den alten "recognizedText" Node, falls vorhanden
+        childNode(withName: "recognizedText")?.removeFromParent()
         
-        let backgroundPath = CGMutablePath()
-        backgroundPath.addArc(
-            center: CGPoint.zero,
-            radius: radius, // Innenkreis bleibt gleich
-            startAngle: 0,
-            endAngle: 2 * .pi,
-            clockwise: true
-        )
+        // 🔹 Erstelle einen neuen Text-Node mit der richtigen Schreibweise
+        let correctWordNode = SKLabelNode(text: correctItem.translation)
+        correctWordNode.fontSize = 20
+        correctWordNode.fontColor = UIColor(red: 0.0, green: 0.5, blue: 0.0, alpha: 1.0) // Dunkleres Grün
+        correctWordNode.fontName = "SFProText-Bold"
+        correctWordNode.position = CGPoint(x: 0, y: radius + 20) // 🔹 Weiter über der Bubble platzieren
+        correctWordNode.name = "correctWord"
         
-        let borderRadius: CGFloat = radius + 6 // Border etwas größer machen
-        let progressPath = CGMutablePath()
-        progressPath.addArc(
-            center: CGPoint.zero,
-            radius: borderRadius, // Äußerer Kreis
-            startAngle: startAngle,
-            endAngle: endAngle,
-            clockwise: true
-        )
+        addChild(correctWordNode)
         
-        // **Hintergrund-Bubble (weiß) → bleibt konstant**
-        if childNode(withName: "backgroundBubble") == nil {
-            let backgroundBubble = SKShapeNode(path: backgroundPath)
-            backgroundBubble.fillColor = .white
-            backgroundBubble.strokeColor = .clear // Kein Rand
-            backgroundBubble.zPosition = -1 // Hintergrund
-            backgroundBubble.name = "backgroundBubble"
-            addChild(backgroundBubble)
+        // 🔹 Füge das ✅ Emoji in die Mitte der Bubble hinzu
+        let emojiNode = SKLabelNode(text: "✅")
+        emojiNode.fontSize = radius * 1.2
+        emojiNode.verticalAlignmentMode = .center
+        emojiNode.horizontalAlignmentMode = .center
+        emojiNode.position = CGPoint(x: 0, y: 0) // 🔹 Emoji leicht unter das Wort setzen
+        
+        addChild(emojiNode)
+        
+        // 🌟 Animation: Emoji kurz größer machen für visuelles Feedback
+        let scaleUp = SKAction.scale(to: 1.5, duration: 0.2)
+        let scaleDown = SKAction.scale(to: 1.0, duration: 0.2)
+        let sequence = SKAction.sequence([scaleUp, scaleDown])
+        emojiNode.run(sequence)
+    }
+    
+    private func startTimer() {
+        let timerDuration: TimeInterval = 3.0
+        
+        let animation = SKAction.customAction(withDuration: timerDuration) { [weak self] _, elapsedTime in
+            let percentage = CGFloat(1.0 - elapsedTime / CGFloat(timerDuration))
+            self?.updatePath(forPercentage: percentage)
         }
         
-        // **Dynamischer Farbwechsel von Blau → Orange → Rot**
+        let checkResult = SKAction.run { [weak self] in
+            guard let self = self else { return }
+            if !self.isCorrect {
+                self.showFeedback(correct: false)
+                self.fallAndRemove()
+            }
+        }
+        
+        let sequence = SKAction.sequence([animation, checkResult])
+        self.run(sequence)
+    }
+    
+    private func fallAndRemove() {
+        let fallDistance = abs(position.y) + radius
+        let fallDuration: TimeInterval = 1.0
+        let fallAction = SKAction.moveBy(x: 0, y: -fallDistance, duration: fallDuration)
+        fallAction.timingMode = .easeIn
+        let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+        let remove = SKAction.removeFromParent()
+        let fallSequence = SKAction.sequence([fallAction, fadeOut, remove])
+        run(fallSequence)
+    }
+    
+    private func showFeedback(correct: Bool) {
+        let feedbackEmoji = correct ? "✅" : "❌"
+        
+        let emojiNode = SKLabelNode(text: feedbackEmoji)
+        emojiNode.fontSize = radius * 1.2
+        emojiNode.verticalAlignmentMode = .center
+        emojiNode.horizontalAlignmentMode = .center
+        emojiNode.position = CGPoint(x: 0, y: 0)
+        
+        addChild(emojiNode)
+    }
+    
+    private func updatePath(forPercentage percentage: CGFloat) {
         let startColor = UIColor.blue
         let midColor = UIColor.orange
         let endColor = UIColor.red
         let interpolatedColor: UIColor
         
         if percentage > 0.5 {
-            // Erste Hälfte: Blau → Orange
-            let factor = (1 - percentage) * 2 // Wertebereich von 0 bis 1
+            let factor = (1 - percentage) * 2
             interpolatedColor = interpolateColor(from: startColor, to: midColor, factor: factor)
         } else {
-            // Zweite Hälfte: Orange → Rot
-            let factor = (1 - (percentage * 2)) // Wertebereich von 0 bis 1
+            let factor = (1 - (percentage * 2))
             interpolatedColor = interpolateColor(from: midColor, to: endColor, factor: factor)
         }
         
-        // **Progress Border**
+        let borderRadius: CGFloat = radius + 6
+        let progressPath = CGMutablePath()
+        progressPath.addArc(center: CGPoint.zero, radius: borderRadius, startAngle: .pi / 2, endAngle: (.pi / 2) - (.pi * 2 * percentage), clockwise: true)
+        
         if let existingBorder = childNode(withName: "progressBorder") as? SKShapeNode {
             existingBorder.path = progressPath
-            existingBorder.strokeColor = interpolatedColor // Dynamischer Farbverlauf
-            existingBorder.lineWidth = 5.0 // Feste Breite
+            existingBorder.strokeColor = interpolatedColor
         } else {
             let borderNode = SKShapeNode(path: progressPath)
             borderNode.strokeColor = interpolatedColor
             borderNode.lineWidth = 5.0
             borderNode.fillColor = .clear
             borderNode.name = "progressBorder"
-            borderNode.zPosition = 1 // Oberhalb der Bubble
+            borderNode.zPosition = 1
             addChild(borderNode)
         }
     }
-    
     private func interpolateColor(from start: UIColor, to end: UIColor, factor: CGFloat) -> UIColor {
         var sR: CGFloat = 0, sG: CGFloat = 0, sB: CGFloat = 0, sA: CGFloat = 0
         var eR: CGFloat = 0, eG: CGFloat = 0, eB: CGFloat = 0, eA: CGFloat = 0
@@ -186,105 +214,40 @@ class Bubble: SKShapeNode {
         start.getRed(&sR, green: &sG, blue: &sB, alpha: &sA)
         end.getRed(&eR, green: &eG, blue: &eB, alpha: &eA)
         
-        let newR = sR + (eR - sR) * factor
-        let newG = sG + (eG - sG) * factor
-        let newB = sB + (eB - sB) * factor
-        let newA = sA + (eA - sA) * factor
-        
-        return UIColor(red: newR, green: newG, blue: newB, alpha: newA)
-    }
-    
-    private func startTimer() {
-        let timerDuration: TimeInterval = 3.0
-        
-        // Timer-Animation (läuft für 3 Sekunden)
-        let animation = SKAction.customAction(withDuration: timerDuration) { [weak self] _, elapsedTime in
-            let percentage = CGFloat(1.0 - elapsedTime / CGFloat(timerDuration))
-            self?.updatePath(forPercentage: percentage)
-        }
-        
-        // Direkt nach der Animation prüfen, ob das Wort richtig war
-        let checkResult = SKAction.run { [weak self] in
-            guard let self = self else { return }
-            
-            // Falls die Antwort richtig war → Bubble bleibt stehen
-            if self.isCorrect {
-                return
-            }
-            
-            // ❌ Falls die Antwort falsch war → Zeige sofort das Kreuz
-            self.showFeedback(correct: false)
-            
-            // ⏳ Warte 1 Sekunde, bevor die Bubble fällt
-            let wait = SKAction.wait(forDuration: 1.0)
-            
-            // Bubble fallen lassen nach 1 Sekunde
-            let fallDistance = abs(self.position.y) + self.radius
-            let fallDuration: TimeInterval = 1.0
-            let fallAction = SKAction.moveBy(x: 0, y: -fallDistance, duration: fallDuration)
-            fallAction.timingMode = .easeIn
-            let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-            let remove = SKAction.removeFromParent()
-            
-            let fallSequence = SKAction.sequence([wait, fallAction, fadeOut, remove])
-            self.run(fallSequence)
-        }
-        
-        // **Richtiger Ablauf:**
-        // 1️⃣ Path-Animation läuft für 3 Sekunden
-        // 2️⃣ Direkt danach → Falls falsch, zeige das rote Kreuz
-        // 3️⃣ ⏳ Warte 1 Sekunde
-        // 4️⃣ Bubble fällt nach unten
-        let sequence = SKAction.sequence([animation, checkResult])
-        self.run(sequence)
-    }
-    
-    private func showFeedback(correct: Bool) {
-        let feedbackImage = correct ? "right" : "wrong"
-        print(correct ? "✅ Correct answer!" : "❌ Wrong answer!")
-        
-        if let existingItemImage = childNode(withName: "itemImage") as? SKSpriteNode {
-            existingItemImage.removeFromParent()
-        }
-        if let existingFeedback = childNode(withName: "feedback") as? SKSpriteNode {
-            existingFeedback.removeFromParent()
-        }
-        
-        let feedbackNode = SKSpriteNode(imageNamed: feedbackImage)
-        feedbackNode.size = CGSize(width: radius * 1.5, height: radius * 1.5)
-        feedbackNode.position = CGPoint(x: 0, y: 0)
-        feedbackNode.name = "feedback"
-        addChild(feedbackNode)
+        return UIColor(red: sR + (eR - sR) * factor, green: sG + (eG - sG) * factor, blue: sB + (eB - sB) * factor, alpha: sA + (eA - sA) * factor)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.removeAction(forKey: "moveUp")
         startTimer()
+        guard !isCorrect else { return }
         
-        let oldText = speechRecognizer?.recognizedText ?? ""
+        self.removeAction(forKey: "moveUp")
+        
+        // 🔹 Den aktuellsten Stand der Spracherkennung zum Zeitpunkt des Klicks speichern
+        var lastRecognizedText = speechRecognizer?.recognizedText ?? ""
+        
+        // 🔹 Setze den erkannten Text für diese Bubble zurück
+        recognizedText = ""
+        displayRecognizedText()
         
         speechRecognizer?.onResult = { [weak self] newText in
             guard let self = self else { return }
             
-            let newPart = self.extractNewText(oldText: oldText, newText: newText)
+            // 🔹 Extrahiere nur den Teil des Textes, der nach dem Klick gesprochen wurde
+            let newPart = self.extractNewText(oldText: lastRecognizedText, newText: newText)
             
             if !newPart.isEmpty {
-                self.recognizedText = newPart
-                self.updateRecognizedText(newText: self.recognizedText)
-                self.displayRecognizedText()
+                self.updateRecognizedText(newText: newPart)
             }
-        }
-        
-        if speechRecognizer?.isRecording == false {
-            speechRecognizer?.startListening()
+            
+            // 🔹 Aktualisiere `lastRecognizedText`, damit wir immer den neuesten Stand haben
+            lastRecognizedText = newText
         }
     }
     
     private func extractNewText(oldText: String, newText: String) -> String {
         guard newText.count > oldText.count else { return newText }
-        
         let startIndex = newText.index(newText.startIndex, offsetBy: oldText.count)
-        let newPart = String(newText[startIndex...])
-        return newPart.trimmingCharacters(in: .whitespacesAndNewlines)
+        return String(newText[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

@@ -7,12 +7,16 @@ struct LanguageSelection: View {
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
-
-            Text("Select Language")
-                .font(.title2)
-                .fontWeight(.semibold)
-                .padding()
-
+            
+            VStack(spacing: 12){
+                Text(settings.localizedText(for: "headline", in: "languageSelection"))
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text(settings.localizedText(for: "info", in: "languageSelection"))
+            }
+            .padding()
+            
             // **Flaggen & Sprachen als Buttons**
             LazyVGrid(
                 columns: [
@@ -30,7 +34,7 @@ struct LanguageSelection: View {
                             VStack {
                                 Text(language.flag)
                                     .font(.system(size: 60))
-
+                                
                                 Text(language.name)
                                     .font(.subheadline)
                                     .foregroundColor(settings.selectedLanguage == languageCode ? .white : .primary)
@@ -45,23 +49,26 @@ struct LanguageSelection: View {
                 }
             }
             .padding(.horizontal)
-
+            
             Spacer()
-
+            
             // **Start-Button**
-            Button(action: {
-                selectLanguage = false
-            }) {
-                Text("Continue")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .padding(.horizontal)
+            if !settings.selectedLanguage.isEmpty {
+                Button(action: {
+                    selectLanguage = false
+                }) {
+                    Text(settings.localizedText(for: "button", in: "languageSelection"))
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                }
+                .transition(.opacity.combined(with: .scale)) // Weiche Animation
+                .animation(.easeInOut(duration: 0.3), value: settings.selectedLanguage)
             }
-            .padding(.bottom, 40)
         }
         .frame(maxHeight: .infinity)
         .padding()

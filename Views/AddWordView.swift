@@ -1,143 +1,135 @@
 import SwiftUI
-import Translation
 
 @available(iOS 18.0, *)
 struct AddWordView: View {
     @Binding var isPresented: Bool
     @ObservedObject var settings: Settings
-
-    @State private var newWord = ""           // Eingabe-Wort
-    @State private var translatedWord = ""    // Automatische Übersetzung
-    @State private var emoji = ""             // Emoji für das Wort
-    @State private var configuration: TranslationSession.Configuration?
-
+    
+    @State private var newWord = ""
+    @State private var translatedWord = ""
+    @State private var emoji = "🌎"
+    @State private var showEmojiPicker = false
+    
     var body: some View {
         if isPresented {
-            VStack {
-                Spacer()
+            ZStack {
+                // 🔹 Hintergrund mit Blur & Overlay
+                VisualEffectBlurView(style: .systemThinMaterial)
+                    .edgesIgnoringSafeArea(.all)
+                    .background(Color.black.opacity(0.3))
+                    .onTapGesture { resetFields() }
                 
-                // ZStack, um den Inhalt und den "X"-Button übereinander zu legen
-                ZStack(alignment: .topTrailing) {
-                    VStack(spacing: 16) {
-                        // 🏷 **Titel**
-                        Text("Add New Word")
-                            .font(.headline)
-                            .padding(.top, 30) // Extra Platz, damit das "X" nicht überlappt
-                        
-                        // **🌍 Eingabefeld für das Original-Wort**
-                        TextField("Enter word...", text: $newWord)
-                            .textFieldStyle(.roundedBorder)
-                            .padding(.horizontal)
-                            .autocapitalization(.none)
-                        
-                        // **🔄 Übersetzungs-Button**
-                        Button(action: {
-                            triggerTranslation()
-                        }) {
-                            HStack {
-                                Image(systemName: "globe")
-                                Text("Translate")
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                        }
-                        .padding(.horizontal)
-                        
-                        // **🎯 Übersetzung + Emoji in einer Reihe**
-                        HStack {
-                            // **Automatische Übersetzung**
-                            TextField("Translation...", text: $translatedWord)
-                                .textFieldStyle(.roundedBorder)
-                                .frame(maxWidth: .infinity)
-                                .autocapitalization(.none)
-                            
-                            // **Emoji-Eingabe**
-                            TextField("Emoji", text: $emoji)
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 60)
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding(.horizontal)
-                        
-                        // **🟢 Action Button "Add"**
-                        Button("Add") {
-                            addNewWord()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(newWord.isEmpty || translatedWord.isEmpty || emoji.isEmpty ? Color.gray : Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .disabled(newWord.isEmpty || translatedWord.isEmpty || emoji.isEmpty)
-                        .padding(.horizontal)
-                    }
-                    .padding()
-                    .background(Color(.systemBackground))
-                    .cornerRadius(12)
-                    .shadow(radius: 5)
+                VStack {
+                    Spacer()
                     
-                    // **❌ "X"-Button oben rechts**
-                    Button(action: {
-                        resetFields()
-                    }) {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.gray)
-                            .padding(10)
+                    ZStack(alignment: .top) {
+                        VStack() {
+                            HStack {
+                                Text(settings.localizedText(for: "headline", in: "addNewWord"))
+                                    .font(.system(size: 22, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                
+                                Spacer()
+                                
+                                Button(action: { resetFields() }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 22))
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            
+                            // ✅ Eingabefelder mit Emoji links
+                            HStack(spacing: 15) {
+                                // 🔹 Emoji-Button links neben den Eingabefeldern
+                                Button(action: {
+                                    showEmojiPicker.toggle()
+                                }) {
+                                    Text(emoji)
+                                        .font(.system(size: 40))
+                                        .frame(width: 60, height: 60)
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(10)
+                                }
+                                
+                                VStack(spacing: 10) {
+                                    TextField(settings.localizedText(for: "word", in: "addNewWord"), text: $newWord)
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(10)
+                                    
+                                    TextField(settings.localizedText(for: "translation", in: "addNewWord"), text: $translatedWord)
+                                        .padding()
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(10)
+                                }
+                            }
+                            .padding()
+                            
+                            // ✅ Button mit Apple-Style
+                            Button(action: addNewWord) {
+                                Text(settings.localizedText(for: "button", in: "addNewWord"))
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(newWord.isEmpty || translatedWord.isEmpty ? Color.gray : Color.blue)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(12)
+                                    .shadow(radius: 3)
+                                    .opacity(newWord.isEmpty || translatedWord.isEmpty ? 0.6 : 1)
+                            }
+                            .disabled(newWord.isEmpty || translatedWord.isEmpty)
+                        }
+                        .padding() // 🔹 Einheitliches Padding für die gesamte Box
+                        .frame(maxWidth: 400)
+                        .background(Color(.systemBackground))
+                        .cornerRadius(20)
+                        .shadow(radius: 12)
+                        .transition(.scale)
                     }
+                    Spacer()
                 }
-                .padding(40)
                 
-                Spacer()
-            }
-            .background(Color.black.opacity(0.5).edgesIgnoringSafeArea(.all))
-            // **Automatische Übersetzung über `TranslationSession`**
-            .translationTask(configuration) { session in
-                do {
-                    let response = try await session.translate(newWord)
-                    translatedWord = response.targetText // Automatisch speichern
-                } catch {
-                    print("Translation failed: \(error)")
+                // ✅ Emoji-Picker mit Seiten-Navigation
+                if showEmojiPicker {
+                    EmojiPicker(selectedEmoji: $emoji, isPresented: $showEmojiPicker, settings: settings)
+                        .transition(.opacity)
                 }
             }
+            .animation(.easeInOut, value: isPresented)
         }
     }
-
-    // **🌍 Übersetzungs-Logik starten**
-    private func triggerTranslation() {
-        guard configuration == nil else {
-            configuration?.invalidate()
-            return
-        }
-
-        let sourceLang = "en" // Standard-Eingabesprache
-        let targetLang = settings.selectedLanguage // Gewählte Sprache
-
-        configuration = .init(source: Locale.Language(identifier: sourceLang),
-                              target: Locale.Language(identifier: targetLang))
-    }
-
+    
     private func addNewWord() {
         guard !newWord.isEmpty, !translatedWord.isEmpty else { return }
-
-        let newItem = Item(
+        
+        let newTargetItem = Item(
             id: UUID(),
             word: newWord,
             translation: translatedWord,
             emoji: emoji
         )
-
-        settings.items.append(newItem) // ✅ Direkt ins Array speichern
+        
+        settings.targetItems.append(newTargetItem)
+        settings.saveItems(for: settings.selectedLanguage, words: settings.targetItems)
+        
+        if !settings.sourceItems.contains(where: { $0.word == translatedWord }) {
+            let newSourceItem = Item(
+                id: UUID(),
+                word: translatedWord,
+                translation: newWord,
+                emoji: emoji
+            )
+            settings.sourceItems.append(newSourceItem)
+            settings.saveItems(for: settings.systemLanguage, words: settings.sourceItems)
+        }
+        
         resetFields()
     }
-
-    // **🔄 Felder zurücksetzen**
+    
     private func resetFields() {
         newWord = ""
         translatedWord = ""
-        emoji = ""
+        emoji = "🌍"
         isPresented = false
     }
 }

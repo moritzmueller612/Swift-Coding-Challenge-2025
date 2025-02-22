@@ -1,7 +1,6 @@
 import Foundation
 
 // 🏷 Modell für ein einzelnes Wort
-// 🏷 Modell für ein einzelnes Wort
 struct Item: Codable, Identifiable {
     var id: UUID = UUID() // ✅ Automatisch generierte UUID
     let word: String
@@ -29,7 +28,7 @@ struct Item: Codable, Identifiable {
 struct Language: Codable {
     let name: String
     let flag: String
-    let words: [Item]
+    var words: [Item]
 }
 
 // 🌍 Modell für die gesamte JSON-Datei

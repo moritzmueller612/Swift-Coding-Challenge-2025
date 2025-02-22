@@ -1,0 +1,183 @@
+{
+    "de": {
+        "languageSelection": {
+            "headline": "Schön, dass du da bist!",
+            "info": "Bevor wir beginnen, wähle bitte eine Sprache aus.",
+            "highscore": "Dein Rekord",
+            "button": "Lass uns loslegen"
+        },
+        "setupView": {
+            "info": "Nun darfst du deine Vokabelliste anpassen. Du kannst Wörter entfernen oder neue hinzufügen.",
+            "button": "Neues Spiel starten"
+        },
+        "addNewWord": {
+            "headline": "Erweitere deine Vokabelliste",
+            "word": "Bitte hier das Wort eingeben ...",
+            "translation": "... und hier die Übersetzung",
+            "button": "Hinzufügen"
+        },
+        "emojiPicker": {
+            "headline": "Wähle einen Emoji",
+            "button": "Ohne Emoji fortfahren"
+        },
+        "gameView": {
+            "info": "Tippe auf eine Vokabelblase und sprich die richtige Übersetzung, um Punkte zu sammeln. Viel Spaß!"
+        }
+    },
+    
+    "en": {
+        "languageSelection": {
+            "headline": "Welcome!",
+            "info": "Before we begin, please select a language.",
+            "highscore": "Your Highscore",
+            "button": "Let's get started"
+        },
+        "setupView": {
+            "info": "Now you can customize your vocabulary list. You can remove words or add new ones.",
+            "button": "Start new game"
+        },
+        "addNewWord": {
+            "headline": "Expand your vocabulary list",
+            "word": "Enter the word here ...",
+            "translation": "... and here the translation",
+            "button": "Add"
+        },
+        "emojiPicker": {
+            "headline": "Choose an emoji",
+            "button": "Continue without emoji"
+        },
+        "gameView": {
+            "info": "Tap on a vocabulary bubble and say the correct translation to collect points. Have fun!"
+        }
+    },
+    
+    "fr": {
+        "languageSelection": {
+            "headline": "Bienvenue!",
+            "info": "Avant de commencer, veuillez choisir une langue.",
+            "highscore": "Votre record",
+            "button": "C'est parti"
+        },
+        "setupView": {
+            "info": "Vous pouvez maintenant personnaliser votre liste de vocabulaire. Supprimez des mots ou ajoutez-en de nouveaux.",
+            "button": "Démarrer une nouvelle partie"
+        },
+        "addNewWord": {
+            "headline": "Élargissez votre liste de vocabulaire",
+            "word": "Entrez le mot ici ...",
+            "translation": "... et ici la traduction",
+            "button": "Ajouter"
+        },
+        "emojiPicker": {
+            "headline": "Choisissez un emoji",
+            "button": "Continuer sans emoji"
+        },
+        "gameView": {
+            "info": "Appuyez sur une bulle de vocabulaire et prononcez la bonne traduction pour gagner des points. Amusez-vous bien !"
+        }
+    },
+    
+    "es": {
+        "languageSelection": {
+            "headline": "¡Bienvenido!",
+            "info": "Antes de comenzar, selecciona un idioma.",
+            "highscore": "Tu récord",
+            "button": "Empecemos"
+        },
+        "setupView": {
+            "info": "Ahora puedes personalizar tu lista de vocabulario. Puedes eliminar palabras o agregar nuevas.",
+            "button": "Iniciar nuevo juego"
+        },
+        "addNewWord": {
+            "headline": "Amplía tu lista de vocabulario",
+            "word": "Escribe la palabra aquí ...",
+            "translation": "... y aquí la traducción",
+            "button": "Añadir"
+        },
+        "emojiPicker": {
+            "headline": "Elige un emoji",
+            "button": "Continuar sin emoji"
+        },
+        "gameView": {
+            "info": "Toca una burbuja de vocabulario y di la traducción correcta para ganar puntos. ¡Diviértete!"
+        }
+    },
+    
+    "it": {
+        "languageSelection": {
+            "headline": "Benvenuto!",
+            "info": "Prima di iniziare, seleziona una lingua.",
+            "highscore": "Il tuo record",
+            "button": "Iniziamo"
+        },
+        "setupView": {
+            "info": "Ora puoi personalizzare la tua lista di vocaboli. Puoi rimuovere parole o aggiungerne di nuove.",
+            "button": "Avvia nuovo gioco"
+        },
+        "addNewWord": {
+            "headline": "Espandi la tua lista di vocaboli",
+            "word": "Inserisci la parola qui ...",
+            "translation": "... e qui la traduzione",
+            "button": "Aggiungi"
+        },
+        "emojiPicker": {
+            "headline": "Scegli un'emoji",
+            "button": "Continua senza emoji"
+        },
+        "gameView": {
+            "info": "Tocca una bolla di vocaboli e pronuncia la traduzione corretta per guadagnare punti. Divertiti!"
+        }
+    },
+    
+    "sv": {
+        "languageSelection": {
+            "headline": "Välkommen!",
+            "info": "Innan vi börjar, välj ett språk.",
+            "highscore": "Ditt rekord",
+            "button": "Låt oss börja"
+        },
+        "setupView": {
+            "info": "Nu kan du anpassa din vokabulärlista. Du kan ta bort ord eller lägga till nya.",
+            "button": "Starta nytt spel"
+        },
+        "addNewWord": {
+            "headline": "Utöka din vokabulärlista",
+            "word": "Skriv in ordet här ...",
+            "translation": "... och här översättningen",
+            "button": "Lägg till"
+        },
+        "emojiPicker": {
+            "headline": "Välj en emoji",
+            "button": "Fortsätt utan emoji"
+        },
+        "gameView": {
+            "info": "Tryck på en vokabulärbubbla och säg den korrekta översättningen för att samla poäng. Ha så kul!"
+        }
+    },
+    
+    "zh": {
+        "languageSelection": {
+            "headline": "欢迎!",
+            "info": "在开始之前，请选择一种语言。",
+            "highscore": "你的最高分",
+            "button": "开始"
+        },
+        "setupView": {
+            "info": "现在你可以自定义你的词汇表。你可以删除单词或添加新的单词。",
+            "button": "开始新游戏"
+        },
+        "addNewWord": {
+            "headline": "扩展你的词汇表",
+            "word": "在这里输入单词 ...",
+            "translation": "... 然后在这里输入翻译",
+            "button": "添加"
+        },
+        "emojiPicker": {
+            "headline": "选择一个表情符号",
+            "button": "继续，不使用表情"
+        },
+        "gameView": {
+            "info": "点击一个词汇气泡，并说出正确的翻译来获得积分。玩得开心！"
+        }
+    }
+}

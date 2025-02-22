@@ -14,7 +14,6 @@ class SpeechRecognizer: ObservableObject {
     
     init(settings: Settings) {
         self.settings = settings
-        print(SFSpeechRecognizer.supportedLocales())
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: settings.selectedLanguage))
         requestAuthorization()
     }

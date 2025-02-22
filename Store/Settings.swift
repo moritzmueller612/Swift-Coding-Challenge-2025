@@ -1,84 +1,115 @@
 import Foundation
 
 class Settings: ObservableObject {
-    @Published var selectedLanguage: String = "en-US" { // ✅ Standard: Englisch (US)
+    @Published var speechManager = SpeechManager()
+    @Published var selectedLanguage: String = "" {
         didSet {
-            loadItems() // ✅ Sprache wechseln → Wörter & Flagge neu laden
+            loadItems()
         }
     }
-    @Published var systemLanguage: String = "en" // 🌍 Automatisch erkannte Systemsprache (nur Sprachcode)
-    @Published var items: [Item] = []
-    @Published var selectedFlag: String = "🇺🇸" // ✅ Standard-Flagge für Englisch
-    @Published var availableLanguages: [String: Language] = [:] // ✅ Alle Sprachen aus JSON speichern
-
+    @Published var systemLanguage: String = "en"
+    @Published var targetItems: [Item] = [] {
+        didSet {
+            saveItems(for: selectedLanguage, words: targetItems)
+        }
+    }
+    @Published var sourceItems: [Item] = [] // 🌍 Speichert Wörter in der System-Sprache
+    @Published var selectedFlag: String = "🇺🇸"
+    @Published var availableLanguages: [String: Language] = [:]
+    
+    private var localizationData: [String: [String: [String: String]]] = [:] // Speicher für Lokalisierungstexte
+    
     init() {
-        loadLanguages() // ✅ Lädt verfügbare Sprachen
-        detectSystemLanguage() // ✅ Erkenne System-Sprache
-        loadItems()     // ✅ Lädt Wörter für die Standard-Sprache
+        loadLanguages()
+        detectSystemLanguage()
+        loadItems()
+        loadLocalization() // 🔹 Lokalisierungsdaten laden
     }
-
-    /// **🔍 Erkennt die System-Sprache des Geräts, ohne `selectedLanguage` zu ändern**
+    
     private func detectSystemLanguage() {
-        let systemLang = Locale.preferredLanguages.first ?? "en-US" // 🌍 Hole erste bevorzugte Sprache
-        let languageCode = String(systemLang.prefix(2)) // ✅ Nur die ersten zwei Buchstaben nehmen
-        print("🌍 System-Sprache erkannt: \(systemLang), gespeichert als: \(languageCode)")
-
-        // **Systemsprache speichern**
-        if availableLanguages.keys.contains(where: { $0.hasPrefix(languageCode) }) {
-            systemLanguage = languageCode // ✅ Falls Sprache existiert → Speichern
+        let systemLang = Locale.preferredLanguages.first ?? "en-US"
+        let languageCode = String(systemLang.prefix(2))
+        
+        if availableLanguages.keys.contains(languageCode) {
+            systemLanguage = languageCode
         } else {
-            systemLanguage = "en" // ❗ Fallback auf Englisch
+            systemLanguage = "en"
         }
     }
-
+    
     private func loadLanguages() {
         guard let url = Bundle.main.url(forResource: "vocabulary", withExtension: "json") else {
-            print("❌ JSON-Datei nicht gefunden")
+            print("Fehler: JSON-Datei nicht gefunden")
             return
         }
-
+        
         do {
             let data = try Data(contentsOf: url)
             let decodedData = try JSONDecoder().decode(LanguageDictionary.self, from: data)
-
+            
             DispatchQueue.main.async {
                 self.availableLanguages = decodedData.languages
-                print("✅ Geladene Sprachen:", self.availableLanguages.keys)
-
-                // ✅ **Alle Wörter speichern, damit wir später auf die System-Sprache zugreifen können**
+                
                 for (code, language) in decodedData.languages {
                     UserDefaults.standard.set(try? JSONEncoder().encode(language.words), forKey: "items_\(code)")
                 }
-
-                self.detectSystemLanguage() // 🌍 **Systemsprache erst nach JSON laden prüfen**
+                
+                self.detectSystemLanguage()
             }
         } catch {
-            print("❌ Fehler beim Dekodieren der Sprachen:", error)
+            print("Fehler beim Dekodieren der JSON-Daten:", error)
         }
     }
-
-    /// **🛠 Speichern der Wörter in UserDefaults**
-    private func saveItems() {
+    
+    public func saveItems(for language: String, words: [Item]) {
         do {
-            let encodedData = try JSONEncoder().encode(items)
-            UserDefaults.standard.set(encodedData, forKey: "items_\(selectedLanguage)")
+            let encodedData = try JSONEncoder().encode(words)
+            UserDefaults.standard.set(encodedData, forKey: "items_\(language)")
         } catch {
-            print("❌ Fehler beim Speichern der Items: \(error)")
+            print("Fehler beim Speichern der Items für \(language):", error)
         }
     }
-
-    /// **🔄 Lade Wörter für die gewählte Sprache (`selectedLanguage`)**
-    func loadItems() {
-        if let savedData = UserDefaults.standard.data(forKey: "items_\(selectedLanguage)"),
+    
+    public func getItems(for language: String) -> [Item] {
+        if let savedData = UserDefaults.standard.data(forKey: "items_\(language)"),
            let savedItems = try? JSONDecoder().decode([Item].self, from: savedData) {
-            self.items = savedItems
-        } else if let languageData = availableLanguages[selectedLanguage] {
-            self.items = languageData.words
-        } else {
-            self.items = [] // ❌ Falls nichts existiert
+            return savedItems
+        } else if let languageData = availableLanguages[language] {
+            return languageData.words
         }
-
-        // ✅ Flagge sofort aktualisieren
+        return []
+    }
+    
+    func loadItems() {
+        self.targetItems = getItems(for: selectedLanguage)
+        self.sourceItems = getItems(for: systemLanguage)
         self.selectedFlag = availableLanguages[selectedLanguage]?.flag ?? ""
+    }
+    
+    func deleteItem(_ item: Item) {
+        targetItems.removeAll { $0.id == item.id }
+        saveItems(for: selectedLanguage, words: targetItems)
+    }
+    
+    // 🔹 Lokalisierungsdaten aus JSON laden
+    private func loadLocalization() {
+        guard let url = Bundle.main.url(forResource: "localization", withExtension: "json") else {
+            print("Fehler: Lokalisierungsdatei nicht gefunden")
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let decodedData = try JSONDecoder().decode([String: [String: [String: String]]].self, from: data)
+            self.localizationData = decodedData
+        } catch {
+            print("Fehler beim Dekodieren der Lokalisierungsdaten:", error)
+        }
+    }
+    
+    // 🔹 Lokalen Text abrufen
+    func localizedText(for key: String, in category: String) -> String {
+        return localizationData[systemLanguage]?[category]?[key] ??
+        localizationData["en"]?[category]?[key] ?? "MISSING_TEXT"
     }
 }

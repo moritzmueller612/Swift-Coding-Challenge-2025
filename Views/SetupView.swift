@@ -1,20 +1,17 @@
 import SwiftUI
-import AVFoundation
 
-@available(iOS 18.0, *)
 struct SetupView: View {
     @Binding var setupComplete: Bool
     @Binding var selectLanguage: Bool
     @EnvironmentObject var settings: Settings
 
-    @State private var showAddWordOverlay = false // Overlay für neue Wörter
-    private let speechSynthesizer = AVSpeechSynthesizer() // 🔊 Text-to-Speech-Engine
+    @State private var showAddWordOverlay = false
+    @State private var selectedItemID: UUID? = nil
+
 
     var body: some View {
         VStack {
-            // **Navigation Bar Look**
             HStack {
-                // 🔙 **Back Button**
                 Button(action: {
                     selectLanguage = true
                 }) {
@@ -31,7 +28,6 @@ struct SetupView: View {
 
                 Spacer()
 
-                // ➕ **Add Word Button**
                 Button(action: {
                     showAddWordOverlay = true
                 }) {
@@ -44,37 +40,51 @@ struct SetupView: View {
             .background(
                 VisualEffectBlurView(style: .systemMaterial)
                     .edgesIgnoringSafeArea(.top)
-                    .allowsHitTesting(false) // ✅ Blur-View blockiert keine Klicks mehr
+                    .allowsHitTesting(false)
             )
-
-            // **Word List mit optimierter Breite**
+            
+            Text(settings.localizedText(for: "info", in: "setupView"))
+                .padding()
+                .multilineTextAlignment(.center)
+            
+            Spacer().frame(height: 0)
+            
             List {
-                ForEach(settings.items) { item in
+                ForEach(settings.targetItems) { item in
                     HStack {
-                        // **Links: Emoji + Wort in der System-Sprache**
                         HStack {
-                            Text(item.emoji) // ✅ Emoji
+                            Text(item.emoji)
                                 .font(.system(size: 24))
 
-                            // 🔍 **Das Wort in der System-Sprache finden**
                             Text(getSystemLanguageWord(for: item.word))
                                 .font(.system(size: 18))
                                 .foregroundColor(.gray)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                        // **Rechts: Übersetztes Wort + Speaker**
                         HStack {
-                            Text(item.translation) // ✅ Übersetztes Wort
+                            Text(item.translation)
                                 .font(.system(size: 18))
                                 .foregroundColor(.primary)
 
                             Button(action: {
-                                speak(item.translation) // ✅ Vorlesen
+                                settings.speechManager.speak(item.translation, in: settings.selectedLanguage)
                             }) {
                                 Image(systemName: "speaker.wave.2.fill")
                                     .foregroundColor(.gray)
                                     .font(.system(size: 18))
+                            }
+                            
+                            if selectedItemID == item.id {
+                                Button(action: {
+                                    deleteItem(item)
+                                    selectedItemID = nil // Auswahl zurücksetzen nach dem Löschen
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                        .font(.system(size: 18))
+                                }
+                                .transition(.opacity) // Weiche Einblendung
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -87,17 +97,23 @@ struct SetupView: View {
                             Label("Delete", systemImage: "trash")
                         }
                     }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            deleteItem(item)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
                 }
             }
-            .listStyle(.insetGrouped) // **Apple-Style**
-            
+            .listStyle(.insetGrouped)
+
             Spacer()
 
-            // **Start Game Button**
             Button(action: {
                 setupComplete = true
             }) {
-                Text("Start Game")
+                Text(settings.localizedText(for: "button", in: "setupView"))
                     .font(.system(size: 16, weight: .semibold))
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -115,35 +131,21 @@ struct SetupView: View {
         )
     }
 
-    // **🔍 Hol das Wort in der System-Sprache**
-    // **🔍 Hol das Wort in der System-Sprache**
-    private func getSystemLanguageWord(for englishWord: String) -> String {
-        guard let systemLangWords = settings.availableLanguages[settings.systemLanguage]?.words else {
-            print("⚠️ System-Sprache nicht gefunden:", settings.systemLanguage)
-            return "Unknown" // ❌ Falls die Sprache nicht existiert
-        }
-
-        // **Wort in der System-Sprache suchen**
-        if let wordEntry = systemLangWords.first(where: { $0.word == englishWord }) {
+    private func getSystemLanguageWord(for sourceWord: String) -> String {
+        if let wordEntry = settings.sourceItems.first(where: { $0.translation == sourceWord }) {
             return wordEntry.translation
-        } else {
-            print("❌ Kein Eintrag gefunden für: \(englishWord)")
         }
 
-        return "Unknown" // ❌ Falls kein Eintrag gefunden wurde
-    }
-    // **🔊 Text-to-Speech**
-    private func speak(_ text: String) {
-        speechSynthesizer.stopSpeaking(at: .immediate)
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: settings.selectedLanguage)
-        utterance.rate = 0.5
-        speechSynthesizer.speak(utterance)
+        if let systemLangWords = settings.availableLanguages[settings.systemLanguage]?.words,
+           let wordEntry = systemLangWords.first(where: { $0.word == sourceWord }) {
+            return wordEntry.translation
+        }
+
+        return "Unknown"
     }
 
-    // **🗑 Löschen eines Elements**
     private func deleteItem(_ item: Item) {
-        settings.items.removeAll { $0.id == item.id }
+        settings.targetItems.removeAll { $0.id == item.id }
     }
 }
 
