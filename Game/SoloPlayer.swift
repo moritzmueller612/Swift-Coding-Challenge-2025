@@ -1,5 +1,4 @@
 import SwiftUI
-
 import SpriteKit
 import SwiftUI
 
@@ -24,14 +23,22 @@ class SoloPlayer: SKScene {
         startBubbleSpawning(speechRecognizer: speechRecognizer, onCorrectAnswer: onCorrectAnswer)
     }
     
+    /// Starts spawning bubbles periodically.
+    /// Each bubble will listen for speech recognition and check if the correct word is spoken.
     private func startBubbleSpawning(speechRecognizer: SpeechRecognizer, onCorrectAnswer: (() -> Void)?) {
         let spawnBubble = SKAction.run { [weak self] in
             guard let self = self else { return }
-            let bubble = Bubble(sceneSize: self.size, radius: CGFloat.random(in: 24...36), settings: settings!, speechRecognizer: speechRecognizer, onCorrectAnswer: onCorrectAnswer)
+            let bubble = Bubble(
+                sceneSize: self.size,
+                radius: CGFloat.random(in: 24...36),
+                settings: settings!,
+                speechRecognizer: speechRecognizer,
+                onCorrectAnswer: onCorrectAnswer
+            )
             self.addChild(bubble)
         }
         
-        let waitAction = SKAction.wait(forDuration: 2.0)
+        let waitAction = SKAction.wait(forDuration: 2.0) // Delay between spawns
         let spawnSequence = SKAction.sequence([spawnBubble, waitAction])
         let repeatSpawn = SKAction.repeatForever(spawnSequence)
         

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct HighscoreBadge: View {
     let score: Int
-    let text: String // Übergabe des lokalisierten Textes für "Dein Rekord:"
+    let text: String
     
     var body: some View {
         HStack(spacing: 6) {

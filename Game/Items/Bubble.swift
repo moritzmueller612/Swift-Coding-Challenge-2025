@@ -3,12 +3,14 @@ import SpriteKit
 class Bubble: SKShapeNode {
     private let radius: CGFloat
     private var recognizedText: String = ""
+    private var previousRecognizedText: String = ""
     private var isCorrect = false
     private let correctItem: Item
     private weak var speechRecognizer: SpeechRecognizer?
     private var onCorrectAnswer: (() -> Void)?
     private let settings: Settings
     
+    /// Initializes a bubble with a random word from the vocabulary list.
     init(sceneSize: CGSize, radius: CGFloat, settings: Settings, speechRecognizer: SpeechRecognizer, onCorrectAnswer: (() -> Void)?) {
         guard let randomItem = settings.targetItems.randomElement() else {
             fatalError("No visible items available in settings")
@@ -37,6 +39,7 @@ class Bubble: SKShapeNode {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /// Renders the emoji or word inside the bubble.
     private func renderItem(randomItem: Item, radius: CGFloat) {
         let displayText = randomItem.emoji.isEmpty ? randomItem.word : randomItem.emoji
         let textNode = SKLabelNode(text: displayText)
@@ -61,6 +64,7 @@ class Bubble: SKShapeNode {
         addChild(textNode)
     }
     
+    /// Moves the bubble upwards in a wavy pattern.
     private func moveUp(sceneSize: CGSize) {
         let totalDuration: TimeInterval = 8.0
         let numberOfWaves = Int.random(in: 4...6)
@@ -68,7 +72,7 @@ class Bubble: SKShapeNode {
         
         var actions: [SKAction] = []
         for _ in 0..<numberOfWaves {
-            let verticalMove = SKAction.moveBy(x: 0, y: sceneSize.height / CGFloat(numberOfWaves), duration: waveDuration)
+            let verticalMove = SKAction.moveBy(x: 0, y: sceneSize.height / CGFloat(numberOfWaves) + self.radius, duration: waveDuration)
             let horizontalOffset = CGFloat.random(in: -50...50)
             let horizontalMove = SKAction.moveBy(x: horizontalOffset, y: 0, duration: waveDuration)
             let waveMove = SKAction.group([verticalMove, horizontalMove])
@@ -82,6 +86,7 @@ class Bubble: SKShapeNode {
         self.run(sequence, withKey: "moveUp")
     }
     
+    /// Displays the recognized speech text above the bubble.
     private func displayRecognizedText() {
         if let existingTextNode = childNode(withName: "recognizedText") as? SKLabelNode {
             existingTextNode.removeFromParent()
@@ -96,6 +101,7 @@ class Bubble: SKShapeNode {
         addChild(textNode)
     }
     
+    /// Updates the recognized text and checks if the answer is correct.
     func updateRecognizedText(newText: String) {
         guard !isCorrect else { return }
         
@@ -116,6 +122,7 @@ class Bubble: SKShapeNode {
         }
     }
     
+    /// Displays a success message when the correct word is spoken.
     private func showCorrectAnswerFeedback() {
         childNode(withName: "recognizedText")?.removeFromParent()
         
@@ -142,6 +149,7 @@ class Bubble: SKShapeNode {
         emojiNode.run(sequence)
     }
     
+    /// Starts a countdown timer before the bubble disappears.
     private func startTimer() {
         let timerDuration: TimeInterval = 3.0
         
@@ -162,6 +170,7 @@ class Bubble: SKShapeNode {
         self.run(sequence)
     }
     
+    /// Makes the bubble fall when the answer is incorrect.
     private func fallAndRemove() {
         let fallDistance = abs(position.y) + radius
         let fallDuration: TimeInterval = 1.0
@@ -173,6 +182,7 @@ class Bubble: SKShapeNode {
         run(fallSequence)
     }
     
+    /// Displays feedback (correct or incorrect).
     private func showFeedback(correct: Bool) {
         let feedbackEmoji = correct ? "👏" : "⛔️"
         
@@ -185,6 +195,7 @@ class Bubble: SKShapeNode {
         addChild(emojiNode)
     }
     
+    /// Updates the countdown border around the bubble.
     private func updatePath(forPercentage percentage: CGFloat) {
         let startColor = UIColor.systemBlue
         let midColor = UIColor.orange
@@ -224,6 +235,7 @@ class Bubble: SKShapeNode {
         }
     }
     
+    /// Updates the border color around the bubble when countdown is running.
     private func interpolateColor(from start: UIColor, to end: UIColor, factor: CGFloat) -> UIColor {
         var sR: CGFloat = 0, sG: CGFloat = 0, sB: CGFloat = 0, sA: CGFloat = 0
         var eR: CGFloat = 0, eG: CGFloat = 0, eB: CGFloat = 0, eA: CGFloat = 0
@@ -234,19 +246,36 @@ class Bubble: SKShapeNode {
         return UIColor(red: sR + (eR - sR) * factor, green: sG + (eG - sG) * factor, blue: sB + (eB - sB) * factor, alpha: sA + (eA - sA) * factor)
     }
     
+    /// Starts speech recognition when the bubble is tapped.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         startTimer()
         guard !isCorrect else { return }
         
         self.removeAction(forKey: "moveUp")
         
-        recognizedText = ""
+        // Store the previously recognized text
+        previousRecognizedText = speechRecognizer?.recognizedText ?? ""
+        
+        recognizedText = ""  // Clear the displayed text for the new bubble
         displayRecognizedText()
         
         speechRecognizer?.onResult = { [weak self] newText in
             guard let self = self else { return }
             
-            self.updateRecognizedText(newText: newText)
+            // Extract only the newly spoken part by comparing with the previous text
+            let newPart = self.extractNewText(oldText: self.previousRecognizedText, newText: newText)
+            
+            // Update the displayed text only if there is new content
+            if !newPart.isEmpty {
+                self.updateRecognizedText(newText: newPart)
+            }
         }
+    }
+    
+    /// Extracts only the newly spoken part of the text.
+    private func extractNewText(oldText: String, newText: String) -> String {
+        guard newText.count > oldText.count else { return "" }  // If no new text is present, return empty string
+        let startIndex = newText.index(newText.startIndex, offsetBy: oldText.count)
+        return String(newText[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

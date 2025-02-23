@@ -8,6 +8,7 @@ struct LanguageSelection: View {
         VStack(spacing: 20) {
             Spacer()
             
+            // Title and description for language selection
             VStack(spacing: 12) {
                 Text(settings.localizedText(for: "headline", in: "languageSelection"))
                     .font(.title2)
@@ -19,6 +20,7 @@ struct LanguageSelection: View {
             }
             .padding()
             
+            // Grid layout for displaying available languages
             LazyVGrid(
                 columns: [
                     GridItem(.flexible(), spacing: 12),
@@ -30,27 +32,33 @@ struct LanguageSelection: View {
                     if let language = settings.availableLanguages[languageCode],
                        !languageCode.contains(settings.systemLanguage) {
                         
-                        ZStack() {
+                        ZStack {
+                            // Language selection button
                             Button(action: {
                                 settings.selectedLanguage = languageCode
                             }) {
                                 VStack(spacing: 6) {
                                     Spacer()
+                                    
+                                    // Display language flag
                                     Text(language.flag)
                                         .font(.system(size: 60))
                                     
+                                    // Display language name
                                     Text(language.name)
                                         .font(.subheadline)
                                         .foregroundColor(settings.selectedLanguage == languageCode ? .white : .primary)
                                     
                                     Spacer(minLength: 5)
                                     
+                                    // Show highscore if available
                                     if settings.getHighscore(for: languageCode) > 0 {
                                         HighscoreBadge(
                                             score: settings.getHighscore(for: languageCode),
                                             text: settings.localizedText(for: "highscore", in: "languageSelection")
                                         )
                                     }
+                                    
                                     Spacer()
                                 }
                                 .frame(maxWidth: .infinity, maxHeight: 132)
@@ -59,6 +67,7 @@ struct LanguageSelection: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .overlay(
                                     Group {
+                                        // Show word count badge if words exist in the language
                                         if settings.getWordCount(for: languageCode) > 0 {
                                             WordCountBadge(count: settings.getWordCount(for: languageCode))
                                                 .offset(x: -8, y: 8)
@@ -76,6 +85,7 @@ struct LanguageSelection: View {
             
             Spacer()
             
+            // Confirm button appears after a language is selected
             if !settings.selectedLanguage.isEmpty {
                 Button(action: {
                     selectLanguage = false
@@ -96,6 +106,5 @@ struct LanguageSelection: View {
         .frame(maxHeight: .infinity)
         .padding()
         .background(Color(.systemGray6).edgesIgnoringSafeArea(.all))
-        .rotationEffect(.degrees(UIDevice.current.orientation.isLandscape ? 90 : 0))
     }
 }

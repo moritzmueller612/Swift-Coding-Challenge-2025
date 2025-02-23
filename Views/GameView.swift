@@ -11,6 +11,7 @@ struct GameView: View {
     @EnvironmentObject var settings: Settings
     @StateObject private var speechRecognizer: SpeechRecognizer
     
+    // Initialize GameView with settings and speech recognition
     init(settings: Settings, setupComplete: Binding<Bool>) {
         _setupComplete = setupComplete
         _speechRecognizer = StateObject(wrappedValue: SpeechRecognizer(settings: settings))
@@ -21,6 +22,7 @@ struct GameView: View {
             ZStack {
                 Color.clear.ignoresSafeArea()
                 
+                // Load and display the SpriteKit game scene
                 SpriteView(scene: makeScene(size: CGSize(width: geometry.size.width, height: geometry.size.height)))
                     .ignoresSafeArea()
                     .background(Color.clear)
@@ -39,12 +41,14 @@ struct GameView: View {
                 
                 VStack {
                     HStack {
+                        // Display selected language flag
                         Text(settings.availableLanguages[settings.selectedLanguage]?.flag ?? "🌍")
                             .font(.system(size: 32))
                         
                         Spacer()
                         
                         VStack {
+                            // Display the current score
                             Text("\(settings.localizedText(for: "score", in: "gameView")) \(score)")
                                 .font(.system(size: 22, weight: .bold, design: .rounded))
                                 .foregroundColor(animateScore ? .yellow : .white)
@@ -65,6 +69,7 @@ struct GameView: View {
                         
                         Spacer()
                         
+                        // Button to exit the game and go back to setup
                         Button(action: {
                             setupComplete = false
                         }) {
@@ -80,6 +85,7 @@ struct GameView: View {
                     
                     Spacer()
                     
+                    // Display game instructions initially
                     if showInfoText {
                         Text(settings.localizedText(for: "info", in: "gameView"))
                             .foregroundColor(Color.secondary)
@@ -103,28 +109,33 @@ struct GameView: View {
         }
     }
     
+    // Creates and configures the game scene
     private func makeScene(size: CGSize) -> SKScene {
         let scene = SoloPlayer(size: size)
         scene.settings = settings
         scene.speechRecognizer = speechRecognizer
         scene.scaleMode = .resizeFill
         
+        // Handles scoring when a correct answer is given
         scene.onCorrectAnswer = {
             self.increaseScore()
         }
         return scene
     }
     
+    // Increases score and updates the highscore if needed
     private func increaseScore() {
         score += 1
         animateScore = true
         
+        // Hide info text after the first point is scored
         if score == 1 {
             withAnimation {
                 showInfoText = false
             }
         }
         
+        // Update highscore if the new score exceeds the previous highscore
         if score > highscore {
             highscore = score
             saveHighscore()
@@ -135,6 +146,7 @@ struct GameView: View {
         }
     }
     
+    // Configures the audio session for speech recognition
     private func configureAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
@@ -145,11 +157,13 @@ struct GameView: View {
         }
     }
     
+    // Saves the highscore for the current language
     private func saveHighscore() {
         let languageKey = "highscore_\(settings.selectedLanguage)"
         UserDefaults.standard.set(highscore, forKey: languageKey)
     }
     
+    // Loads the saved highscore for the current language
     private func loadHighscore() {
         let languageKey = "highscore_\(settings.selectedLanguage)"
         highscore = UserDefaults.standard.integer(forKey: languageKey)
