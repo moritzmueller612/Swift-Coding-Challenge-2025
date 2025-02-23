@@ -4,6 +4,8 @@ import SpriteKit
 
 struct GameView: View {
     @State private var score: Int = 0
+    @State private var animateScore = false
+    @State private var showInfoText = true
     @Binding var setupComplete: Bool
     @EnvironmentObject var settings: Settings
     @StateObject private var speechRecognizer: SpeechRecognizer
@@ -16,7 +18,6 @@ struct GameView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Transparent background
                 Color.clear.ignoresSafeArea()
                 
                 SpriteView(scene: makeScene(size: CGSize(width: geometry.size.width, height: geometry.size.height)))
@@ -35,36 +36,57 @@ struct GameView: View {
                         speechRecognizer.reset()
                     }
                 
-                // **OBERE LEISTE (Score & Schließen-Button)**
                 VStack {
                     HStack {
-                        Text("Score: \(score)")
-                            .font(.headline)
-                            .padding()
-                            .foregroundColor(.black)
+                        Text(settings.availableLanguages[settings.selectedLanguage]?.flag ?? "🌍")
+                            .font(.system(size: 32))
+                        
+                        Spacer()
+                        
+                        Text("\(settings.localizedText(for: "score", in: "gameView")) \(score)")
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundColor(animateScore ? .yellow : .white)
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.blue.opacity(animateScore ? 1.0 : 0.8))
+                                    .shadow(color: .blue.opacity(0.5), radius: animateScore ? 10 : 4)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                            )
+                            .scaleEffect(animateScore ? 1.2 : 1.0)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.5, blendDuration: 0), value: animateScore)
                         
                         Spacer()
                         
                         Button(action: {
-                            setupComplete = false // Zurück zur SetupView
+                            setupComplete = false
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 30, height: 30)
                                 .foregroundColor(.red)
-                                .padding()
+                                .padding(.vertical)
                         }
                     }
                     .padding(.horizontal)
                     
                     Spacer()
                     
-                    // **INFO TEXT UNTEN MITTE**
-                    Text("Tap the Bubbles and say the words")
-                        .foregroundColor(.black)
-                        .font(.subheadline)
-                        .padding(.bottom, 40)
+                    if showInfoText {
+                        Text(settings.localizedText(for: "info", in: "gameView"))
+                            .foregroundColor(Color.secondary)
+                            .font(.subheadline)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 20)
+                            .transition(.opacity)
+                            .animation(.easeInOut(duration: 2.5), value: showInfoText)
+                            .padding()
+                    }
                 }
             }
         }
@@ -91,6 +113,17 @@ struct GameView: View {
     
     private func increaseScore() {
         score += 1
+        animateScore = true
+        
+        if score == 1 {
+            withAnimation {
+                showInfoText = false
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            animateScore = false
+        }
     }
     
     private func configureAudioSession() {

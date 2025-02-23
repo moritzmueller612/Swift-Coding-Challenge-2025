@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 18.0, *)
 struct AddWordView: View {
     @Binding var isPresented: Bool
     @ObservedObject var settings: Settings
@@ -13,7 +12,6 @@ struct AddWordView: View {
     var body: some View {
         if isPresented {
             ZStack {
-                // 🔹 Hintergrund mit Blur & Overlay
                 VisualEffectBlurView(style: .systemThinMaterial)
                     .edgesIgnoringSafeArea(.all)
                     .background(Color.black.opacity(0.3))
@@ -23,7 +21,7 @@ struct AddWordView: View {
                     Spacer()
                     
                     ZStack(alignment: .top) {
-                        VStack() {
+                        VStack {
                             HStack {
                                 Text(settings.localizedText(for: "headline", in: "addNewWord"))
                                     .font(.system(size: 22, weight: .semibold))
@@ -38,9 +36,7 @@ struct AddWordView: View {
                                 }
                             }
                             
-                            // ✅ Eingabefelder mit Emoji links
                             HStack(spacing: 15) {
-                                // 🔹 Emoji-Button links neben den Eingabefeldern
                                 Button(action: {
                                     showEmojiPicker.toggle()
                                 }) {
@@ -52,20 +48,29 @@ struct AddWordView: View {
                                 }
                                 
                                 VStack(spacing: 10) {
-                                    TextField(settings.localizedText(for: "word", in: "addNewWord"), text: $newWord)
-                                        .padding()
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(10)
+                                    HStack {
+                                        TextField(settings.localizedText(for: "word", in: "addNewWord"), text: $newWord)
+                                            .padding()
+                                            .background(Color(.systemGray6))
+                                            .cornerRadius(10)
+                                        
+                                        Text(settings.availableLanguages[settings.systemLanguage]?.flag ?? "🌍")
+                                            .font(.system(size: 24))
+                                    }
                                     
-                                    TextField(settings.localizedText(for: "translation", in: "addNewWord"), text: $translatedWord)
-                                        .padding()
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(10)
+                                    HStack {
+                                        TextField(settings.localizedText(for: "translation", in: "addNewWord"), text: $translatedWord)
+                                            .padding()
+                                            .background(Color(.systemGray6))
+                                            .cornerRadius(10)
+                                        
+                                        Text(settings.availableLanguages[settings.selectedLanguage]?.flag ?? "🌍")
+                                            .font(.system(size: 24))
+                                    }
                                 }
                             }
                             .padding()
                             
-                            // ✅ Button mit Apple-Style
                             Button(action: addNewWord) {
                                 Text(settings.localizedText(for: "button", in: "addNewWord"))
                                     .font(.system(size: 18, weight: .semibold))
@@ -73,23 +78,23 @@ struct AddWordView: View {
                                     .padding()
                                     .background(newWord.isEmpty || translatedWord.isEmpty ? Color.gray : Color.blue)
                                     .foregroundColor(.white)
-                                    .cornerRadius(12)
+                                    .cornerRadius(10)
                                     .shadow(radius: 3)
                                     .opacity(newWord.isEmpty || translatedWord.isEmpty ? 0.6 : 1)
                             }
                             .disabled(newWord.isEmpty || translatedWord.isEmpty)
                         }
-                        .padding() // 🔹 Einheitliches Padding für die gesamte Box
-                        .frame(maxWidth: 400)
+                        .padding()
+                        .frame(maxWidth: 500)
                         .background(Color(.systemBackground))
-                        .cornerRadius(20)
+                        .cornerRadius(10)
                         .shadow(radius: 12)
                         .transition(.scale)
+                        .padding()
                     }
                     Spacer()
                 }
                 
-                // ✅ Emoji-Picker mit Seiten-Navigation
                 if showEmojiPicker {
                     EmojiPicker(selectedEmoji: $emoji, isPresented: $showEmojiPicker, settings: settings)
                         .transition(.opacity)

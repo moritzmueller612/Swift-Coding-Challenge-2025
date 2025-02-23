@@ -21,13 +21,14 @@
             "button": "Ohne Emoji fortfahren"
         },
         "gameView": {
+            "score": "Punktestand:",
             "info": "Tippe auf eine Vokabelblase und sprich die richtige Übersetzung, um Punkte zu sammeln. Viel Spaß!"
         }
     },
     
     "en": {
         "languageSelection": {
-            "headline": "Welcome!",
+            "headline": "Great to have you here!",
             "info": "Before we begin, please select a language.",
             "highscore": "Your Highscore",
             "button": "Let's get started"
@@ -47,13 +48,14 @@
             "button": "Continue without emoji"
         },
         "gameView": {
+            "score": "Score:",
             "info": "Tap on a vocabulary bubble and say the correct translation to collect points. Have fun!"
         }
     },
     
     "fr": {
         "languageSelection": {
-            "headline": "Bienvenue!",
+            "headline": "Ravi de vous voir ici !",
             "info": "Avant de commencer, veuillez choisir une langue.",
             "highscore": "Votre record",
             "button": "C'est parti"
@@ -73,13 +75,14 @@
             "button": "Continuer sans emoji"
         },
         "gameView": {
+            "score": "Score:",
             "info": "Appuyez sur une bulle de vocabulaire et prononcez la bonne traduction pour gagner des points. Amusez-vous bien !"
         }
     },
     
     "es": {
         "languageSelection": {
-            "headline": "¡Bienvenido!",
+            "headline": "¡Qué alegría verte aquí!",
             "info": "Antes de comenzar, selecciona un idioma.",
             "highscore": "Tu récord",
             "button": "Empecemos"
@@ -99,13 +102,14 @@
             "button": "Continuar sin emoji"
         },
         "gameView": {
+            "score": "Puntuación:",
             "info": "Toca una burbuja de vocabulario y di la traducción correcta para ganar puntos. ¡Diviértete!"
         }
     },
     
     "it": {
         "languageSelection": {
-            "headline": "Benvenuto!",
+            "headline": "Felice di vederti qui!",
             "info": "Prima di iniziare, seleziona una lingua.",
             "highscore": "Il tuo record",
             "button": "Iniziamo"
@@ -125,13 +129,14 @@
             "button": "Continua senza emoji"
         },
         "gameView": {
+            "score": "Punteggio:",
             "info": "Tocca una bolla di vocaboli e pronuncia la traduzione corretta per guadagnare punti. Divertiti!"
         }
     },
     
     "sv": {
         "languageSelection": {
-            "headline": "Välkommen!",
+            "headline": "Kul att du är här!",
             "info": "Innan vi börjar, välj ett språk.",
             "highscore": "Ditt rekord",
             "button": "Låt oss börja"
@@ -151,13 +156,14 @@
             "button": "Fortsätt utan emoji"
         },
         "gameView": {
+            "score": "Poäng:",
             "info": "Tryck på en vokabulärbubbla och säg den korrekta översättningen för att samla poäng. Ha så kul!"
         }
     },
     
     "zh": {
         "languageSelection": {
-            "headline": "欢迎!",
+            "headline": "很高兴见到你！",
             "info": "在开始之前，请选择一种语言。",
             "highscore": "你的最高分",
             "button": "开始"
@@ -177,6 +183,7 @@
             "button": "继续，不使用表情"
         },
         "gameView": {
+            "score": "分数:",
             "info": "点击一个词汇气泡，并说出正确的翻译来获得积分。玩得开心！"
         }
     }

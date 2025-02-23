@@ -8,41 +8,49 @@ struct EmojiPicker: View {
     
     @State private var currentPage = 0
     
-    // ✅ Emojis in Seiten unterteilt
     private let emojiPages: [[String]] = [
-        // 😃 Emotionen & Gesichter
-        ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "😍", "😜", "😎", "🤩", "🥳", "😢", "😭", "😡", "😱"],
+        // Emotions & Faces
+        ["😀", "😂", "😊", "😍", "😎", "😢", "😭", "😡", "😱", "🤯", "😴", "🤢", "😷", "🤕", "🥳", "🤓", "🥺", "😇", "😜"],
         
-        // 🐶 Tiere
-        ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🐔", "🐧", "🦆", "🦉", "🦄"],
+        // Household & Furniture
+        ["🛏️", "🚪", "🛋", "🚿", "🛁", "🪑", "📺", "🖼", "🪞", "🔑", "🛠", "🧹", "🧼", "🍽", "🪟", "🗑"],
         
-        // 🍏 Essen & Trinken
-        ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍒", "🥑", "🥕", "🌽", "🍞", "🥐", "🧀", "🥩", "🍕", "🍔", "🌮"],
+        // Food & Drinks
+        ["🍎", "🍊", "🍌", "🍉", "🍇", "🍓", "🍒", "🥑", "🥕", "🥦", "🌽", "🍞", "🧀", "🥩", "🥗", "☕️", "🥤", "🍷", "🍺", "🍦"],
         
-        // 🚗 Fahrzeuge & Transport
-        ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚜", "🚂", "✈️", "🚀", "🛳"],
+        // Transportation & Vehicles
+        ["🚗", "🚕", "🚌", "🚎", "🚓", "🚑", "🚒", "🚂", "✈️", "🚀", "🛳", "🚤", "🚲", "🏍", "🚉", "🚠", "🛴", "🛣️"],
         
-        // ⚽️ Sport & Aktivitäten
-        ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "⛳️", "🥊", "🎿", "🏹", "🛹", "🛶", "🏋️", "🤸", "🏊", "🚴"],
+        // Clothing & Accessories
+        ["👕", "👖", "🧥", "👗", "👚", "👔", "🩳", "🧦", "👟", "👠", "🧢", "🕶", "🎒", "👜", "👒"],
         
-        // 👨‍⚕️ Berufe & Kleidung
-        ["👨‍⚕️", "👩‍🏫", "👨‍🍳", "👩‍🚀", "👨‍🎨", "👮", "👷", "💂", "🕵️", "🎩", "👗", "👚", "🧥", "👖", "👠", "👞", "🎓", "🦺", "🎭"],
+        // Professions & Work
+        ["👨‍⚕️", "👩‍🏫", "👨‍🍳", "👮", "👷", "💂", "🕵️", "💼", "🎨", "👩‍💻", "👨‍🔬", "🛠", "⚖️", "🏢", "📄", "🖊", "🖥", "☎️"],
         
-        // 🛏️ Haushalt & Möbel
-        ["🛏️", "🛋", "🚪", "🚿", "🛁", "🪑", "🖼", "🪞", "📺", "📻", "🎛", "🔑", "🔧", "🪚", "🧹", "🧼", "🪠", "🛠", "🔦", "🛒"],
+        // 🌍 Nature & Weather (Weather & outdoor words)
+        ["🌳", "🌲", "🌻", "🌷", "🌊", "🔥", "🌈", "❄️",   "☀️", "☁️", "☔️", "⚡️", "🌪", "🏔", "🏖", "🏜", "🌅"],
         
-        // 🌳 Natur & Wetter
-        ["🌳", "🌲", "🌵", "🌺", "🌻", "🌷", "🌊", "🔥", "🌈", "❄️", "⛅️", "☔️", "⚡️", "🌪", "🌍", "🏔", "🏖", "🏜", "🏕", "🌅"],
+        // Places & Buildings
+        ["🏠", "🏢", "🏫", "🏥", "🏬", "🏦", "🏛", "🏪", "🗽", "🏯", "🕌", "🏰", "🛕", "⛪️", "🏨", "🚉", "🛤"],
         
-        // 📱 Technologie & Medien
-        ["📱", "💻", "🖥", "🖨", "🖱", "📡", "📷", "🎥", "🎙", "📺", "📞", "☎️", "⏰", "🔋", "🧮", "📡", "🛰", "💾", "🖊"],
+        // 📱 Technology & Media
+        ["📱", "💻", "🖥", "🖨", "📷", "🎥", "🎙", "📺", "☎️", "⏰", "🔋", "🛰", "💾", "🖊", "📡"],
         
-        // 📖 Schule & Lernen
-        ["📖", "📚", "📓", "✏️", "🖊", "🖋", "📏", "📐", "📊", "🖍", "📌", "📎", "📅", "🎨", "🔬", "🧪", "🗺", "🎼", "🎭"]
+        // Education & Learning
+        ["📖", "📚", "📓", "✏️", "🖊", "📏", "📐", "📊", "🖍", "📌", "📎", "📅", "🔬", "🧪", "🗺", "📔"],
+        
+        // Shopping & Money
+        ["🛍", "🛒", "💰", "💳", "🏧", "💵", "💶", "💷", "💴", "💸", "🏷", "🎁"],
+        
+        // People & Family
+        ["👶", "👧", "🧒", "👦", "👩", "👨", "🧑", "👵", "👴", "👫", "🧑‍🤝‍🧑"],
+        
+        // Countries & Travel
+        ["🗺", "🌍", "🏕", "🏜", "🗽", "🏯", "🕌", "🏰", "🛫", "🎢", "🌇"]
     ]
     
     var body: some View {
-        VStack(spacing: 10) { // 🔹 Optimierte Abstände
+        VStack(spacing: 10) {
             HStack {
                 Text(settings.localizedText(for: "headline", in: "emojiPicker"))
                     .font(.system(size: 22, weight: .semibold))
@@ -58,7 +66,6 @@ struct EmojiPicker: View {
             }
             .padding()
             
-            // 🔹 Flexible Höhe statt fester Größe
             TabView(selection: $currentPage) {
                 ForEach(emojiPages.indices, id: \.self) { index in
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 5), spacing: 12) {
@@ -67,7 +74,7 @@ struct EmojiPicker: View {
                                 .font(.largeTitle)
                                 .frame(width: 50, height: 50)
                                 .background(Color(.systemGray5))
-                                .cornerRadius(8)
+                                .cornerRadius(10)
                                 .onTapGesture {
                                     selectedEmoji = emoji
                                     isPresented = false
@@ -82,15 +89,14 @@ struct EmojiPicker: View {
             .background(
                 Color.clear
                     .onAppear {
-                        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.label // Dynamische Farbe
-                        UIPageControl.appearance().pageIndicatorTintColor = UIColor.secondaryLabel // Dezente Farbe für nicht aktive Punkte
+                        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.label
+                        UIPageControl.appearance().pageIndicatorTintColor = UIColor.secondaryLabel
                     }
             )
             .frame(height: CGFloat((emojiPages.map { $0.count }.max() ?? 20) / 5 * 50 + 150))
             
-            // 🔹 Button zum Überspringen
             Button(settings.localizedText(for: "button", in: "emojiPicker")) {
-                selectedEmoji = "" // Leeres Emoji = kein Emoji
+                selectedEmoji = ""
                 isPresented = false
             }
             .padding(.vertical, 8)
@@ -100,10 +106,10 @@ struct EmojiPicker: View {
             .foregroundColor(.white)
             .padding()
         }
-        .frame(width: 350) // Breite fixiert, Höhe flexibel
+        .frame(maxWidth: 350)
         .background(Color(.systemBackground))
-        .cornerRadius(12)
+        .cornerRadius(10)
         .shadow(radius: 10)
-        .padding(.bottom, 10) // Etwas Abstand unten
+        .padding()
     }
 }

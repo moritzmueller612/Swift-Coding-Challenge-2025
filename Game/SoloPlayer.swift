@@ -9,7 +9,7 @@ class SoloPlayer: SKScene {
     var onCorrectAnswer: (() -> Void)?
     
     override func didMove(to view: SKView) {
-        self.backgroundColor = .white
+        self.backgroundColor = .systemBackground
         
         guard let speechRecognizer = speechRecognizer else {
             print("Speech Recognition not available")
@@ -21,7 +21,6 @@ class SoloPlayer: SKScene {
             return
         }
         
-        // Starten des Bubble-Spawns
         startBubbleSpawning(speechRecognizer: speechRecognizer, onCorrectAnswer: onCorrectAnswer)
     }
     
@@ -32,7 +31,7 @@ class SoloPlayer: SKScene {
             self.addChild(bubble)
         }
         
-        let waitAction = SKAction.wait(forDuration: 2.0) // 2 Sekunden
+        let waitAction = SKAction.wait(forDuration: 2.0)
         let spawnSequence = SKAction.sequence([spawnBubble, waitAction])
         let repeatSpawn = SKAction.repeatForever(spawnSequence)
         

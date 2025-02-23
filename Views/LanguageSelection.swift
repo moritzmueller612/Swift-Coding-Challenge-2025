@@ -2,8 +2,8 @@ import SwiftUI
 
 struct LanguageSelection: View {
     @Binding var selectLanguage: Bool
-    @EnvironmentObject var settings: Settings // Zugriff auf globale Einstellungen
-
+    @EnvironmentObject var settings: Settings
+    
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -12,12 +12,13 @@ struct LanguageSelection: View {
                 Text(settings.localizedText(for: "headline", in: "languageSelection"))
                     .font(.title2)
                     .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
                 
                 Text(settings.localizedText(for: "info", in: "languageSelection"))
+                    .multilineTextAlignment(.center)
             }
             .padding()
             
-            // **Flaggen & Sprachen als Buttons**
             LazyVGrid(
                 columns: [
                     GridItem(.flexible(), spacing: 12),
@@ -27,7 +28,7 @@ struct LanguageSelection: View {
             ) {
                 ForEach(settings.availableLanguages.keys.sorted(), id: \.self) { languageCode in
                     if let language = settings.availableLanguages[languageCode],
-                       !languageCode.contains(settings.systemLanguage) { // ❌ System-Sprache ausblenden
+                       !languageCode.contains(settings.systemLanguage) { 
                         Button(action: {
                             settings.selectedLanguage = languageCode
                         }) {
@@ -52,7 +53,6 @@ struct LanguageSelection: View {
             
             Spacer()
             
-            // **Start-Button**
             if !settings.selectedLanguage.isEmpty {
                 Button(action: {
                     selectLanguage = false
@@ -66,7 +66,7 @@ struct LanguageSelection: View {
                         .cornerRadius(10)
                         .padding(.horizontal)
                 }
-                .transition(.opacity.combined(with: .scale)) // Weiche Animation
+                .transition(.opacity.combined(with: .scale))
                 .animation(.easeInOut(duration: 0.3), value: settings.selectedLanguage)
             }
         }

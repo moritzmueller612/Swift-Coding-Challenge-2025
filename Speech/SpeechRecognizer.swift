@@ -41,19 +41,17 @@ class SpeechRecognizer: ObservableObject {
             return
         }
         
-        // Vorherige Erkennung abbrechen, falls vorhanden
         if recognitionTask != nil {
             recognitionTask?.cancel()
             recognitionTask = nil
         }
         
-        // Audio-Session konfigurieren
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            recognizedText = "Audio Session Fehler: \(error.localizedDescription)"
+            recognizedText = error.localizedDescription
             return
         }
         
@@ -63,7 +61,6 @@ class SpeechRecognizer: ObservableObject {
         }
         recognitionRequest.shouldReportPartialResults = true
         
-        // Spracherkennung starten
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { result, error in
             if let result = result {
                 DispatchQueue.main.async {
@@ -80,7 +77,6 @@ class SpeechRecognizer: ObservableObject {
             }
         }
         
-        // Audio-Engine konfigurieren
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
@@ -94,7 +90,7 @@ class SpeechRecognizer: ObservableObject {
                 self.isRecording = true
             }
         } catch {
-            recognizedText = "Audio Engine Fehler: \(error.localizedDescription)"
+            recognizedText = error.localizedDescription
         }
     }
     
@@ -125,9 +121,8 @@ class SpeechRecognizer: ObservableObject {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(.ambient, mode: .default, options: [])
             try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
-            print("🔇 Audio session successfully reset.")
         } catch {
-            print("❌ Error resetting audio session: \(error)")
+            print("Error resetting audio session: \(error)")
         }
     }
     

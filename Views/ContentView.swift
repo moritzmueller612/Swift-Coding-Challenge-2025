@@ -10,20 +10,20 @@ struct ContentView: View {
             if selectLanguage {
                 LanguageSelection(selectLanguage: $selectLanguage)
                     .environmentObject(settings)
-                    .transition(.opacity)// Sanfter Slide-In-Effekt
+                    .transition(.opacity)
             } else {
                 if setupComplete {
                     GameView(settings: settings, setupComplete: $setupComplete)
                         .environmentObject(settings)
-                        .transition(.opacity) // Weicher Überblendeffekt
+                        .transition(.opacity)
                 } else {
                     SetupView(setupComplete: $setupComplete, selectLanguage: $selectLanguage)
                         .environmentObject(settings)
-                        .transition(.opacity) // Sanfter Slide-In von rechts
+                        .transition(.opacity)
                 }
             }
         }
-        .animation(.easeInOut(duration: 0.5), value: selectLanguage) // Dauer 0.5 Sek.
+        .animation(.easeInOut(duration: 0.5), value: selectLanguage)
         .animation(.easeInOut(duration: 0.5), value: setupComplete)
     }
 }

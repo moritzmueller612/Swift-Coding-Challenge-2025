@@ -3,7 +3,7 @@ import SpriteKit
 class Bubble: SKShapeNode {
     private let radius: CGFloat
     private var recognizedText: String = ""
-    private var isCorrect = false // Speichert, ob die Antwort richtig war
+    private var isCorrect = false
     private let correctItem: Item
     private weak var speechRecognizer: SpeechRecognizer?
     private var onCorrectAnswer: (() -> Void)?
@@ -25,7 +25,7 @@ class Bubble: SKShapeNode {
         
         updatePath(forPercentage: 1.0)
         self.position = CGPoint(x: CGFloat.random(in: radius...(sceneSize.width - radius * 2)), y: -radius)
-        self.strokeColor = UIColor.blue
+        self.strokeColor = UIColor.systemBlue
         self.lineWidth = 5.0
         self.fillColor = .white
         
@@ -38,13 +38,27 @@ class Bubble: SKShapeNode {
     }
     
     private func renderItem(randomItem: Item, radius: CGFloat) {
-        let emojiNode = SKLabelNode(text: randomItem.emoji)
-        emojiNode.fontSize = radius * 1.2
-        emojiNode.verticalAlignmentMode = .center
-        emojiNode.horizontalAlignmentMode = .center
-        emojiNode.position = CGPoint(x: 0, y: 0)
+        let displayText = randomItem.emoji.isEmpty ? randomItem.word : randomItem.emoji
+        let textNode = SKLabelNode(text: displayText)
+        textNode.verticalAlignmentMode = .center
+        textNode.horizontalAlignmentMode = .center
+        textNode.position = CGPoint(x: 0, y: 0)
+        textNode.fontName = "SFProText-Bold"
         
-        addChild(emojiNode)
+        let defaultFontSize = randomItem.emoji.isEmpty ? radius * 0.7 : radius * 1.2
+        textNode.fontSize = defaultFontSize
+        
+        let maxWidth = radius * 1.9
+        let estimatedWidth = textNode.frame.width
+        
+        if estimatedWidth > maxWidth {
+            let scaleFactor = maxWidth / estimatedWidth
+            textNode.fontSize *= scaleFactor
+        }
+        
+        textNode.fontColor = randomItem.emoji.isEmpty ? UIColor.label : UIColor.secondaryLabel
+        
+        addChild(textNode)
     }
     
     private func moveUp(sceneSize: CGSize) {
@@ -75,7 +89,7 @@ class Bubble: SKShapeNode {
         
         let textNode = SKLabelNode(text: recognizedText)
         textNode.fontSize = 18
-        textNode.fontColor = .black
+        textNode.fontColor = UIColor.label
         textNode.fontName = "SFProText-Bold"
         textNode.position = CGPoint(x: 0, y: radius + 10)
         textNode.name = "recognizedText"
@@ -83,50 +97,45 @@ class Bubble: SKShapeNode {
     }
     
     func updateRecognizedText(newText: String) {
-        guard !isCorrect else { return } // Falls bereits korrekt, nichts ändern
+        guard !isCorrect else { return }
         
         let correctAnswer = correctItem.translation
         recognizedText = newText
-        displayRecognizedText() // 🔹 Zeigt das gesprochene Wort weiterhin an
+        displayRecognizedText()
         
         if newText.lowercased().contains(correctAnswer.lowercased()) {
-            isCorrect = true // Bubble bleibt stehen
-            onCorrectAnswer?() // Score erhöhen
+            isCorrect = true
+            onCorrectAnswer?()
             
-            showCorrectAnswerFeedback() // ✅ Emoji + Korrektes Wort anzeigen
+            showCorrectAnswerFeedback()
             
-            // 🌟 Animation: Langsames Verblassen der gesamten Bubble
             let wait = SKAction.wait(forDuration: 1.0)
             let fadeOut = SKAction.fadeOut(withDuration: 1.0)
             let remove = SKAction.removeFromParent()
-            self.run(SKAction.sequence([wait, fadeOut, remove])) // Bubble verschwindet langsam
+            self.run(SKAction.sequence([wait, fadeOut, remove])) 
         }
     }
     
     private func showCorrectAnswerFeedback() {
-        // 🔹 Entferne den alten "recognizedText" Node, falls vorhanden
         childNode(withName: "recognizedText")?.removeFromParent()
         
-        // 🔹 Erstelle einen neuen Text-Node mit der richtigen Schreibweise
         let correctWordNode = SKLabelNode(text: correctItem.translation)
         correctWordNode.fontSize = 20
-        correctWordNode.fontColor = UIColor(red: 0.0, green: 0.5, blue: 0.0, alpha: 1.0) // Dunkleres Grün
+        correctWordNode.fontColor = UIColor.systemGreen
         correctWordNode.fontName = "SFProText-Bold"
-        correctWordNode.position = CGPoint(x: 0, y: radius + 20) // 🔹 Weiter über der Bubble platzieren
+        correctWordNode.position = CGPoint(x: 0, y: radius + 20) 
         correctWordNode.name = "correctWord"
         
         addChild(correctWordNode)
         
-        // 🔹 Füge das ✅ Emoji in die Mitte der Bubble hinzu
-        let emojiNode = SKLabelNode(text: "✅")
+        let emojiNode = SKLabelNode(text: "👏")
         emojiNode.fontSize = radius * 1.2
         emojiNode.verticalAlignmentMode = .center
         emojiNode.horizontalAlignmentMode = .center
-        emojiNode.position = CGPoint(x: 0, y: 0) // 🔹 Emoji leicht unter das Wort setzen
+        emojiNode.position = CGPoint(x: 0, y: 0)
         
         addChild(emojiNode)
         
-        // 🌟 Animation: Emoji kurz größer machen für visuelles Feedback
         let scaleUp = SKAction.scale(to: 1.5, duration: 0.2)
         let scaleDown = SKAction.scale(to: 1.0, duration: 0.2)
         let sequence = SKAction.sequence([scaleUp, scaleDown])
@@ -165,7 +174,7 @@ class Bubble: SKShapeNode {
     }
     
     private func showFeedback(correct: Bool) {
-        let feedbackEmoji = correct ? "✅" : "❌"
+        let feedbackEmoji = correct ? "👏" : "⛔️"
         
         let emojiNode = SKLabelNode(text: feedbackEmoji)
         emojiNode.fontSize = radius * 1.2
@@ -177,7 +186,7 @@ class Bubble: SKShapeNode {
     }
     
     private func updatePath(forPercentage percentage: CGFloat) {
-        let startColor = UIColor.blue
+        let startColor = UIColor.systemBlue
         let midColor = UIColor.orange
         let endColor = UIColor.red
         let interpolatedColor: UIColor
@@ -191,6 +200,12 @@ class Bubble: SKShapeNode {
         }
         
         let borderRadius: CGFloat = radius + 6
+        
+        if percentage <= 0 {
+            childNode(withName: "progressBorder")?.removeFromParent()
+            return
+        }
+        
         let progressPath = CGMutablePath()
         progressPath.addArc(center: CGPoint.zero, radius: borderRadius, startAngle: .pi / 2, endAngle: (.pi / 2) - (.pi * 2 * percentage), clockwise: true)
         
@@ -202,11 +217,13 @@ class Bubble: SKShapeNode {
             borderNode.strokeColor = interpolatedColor
             borderNode.lineWidth = 5.0
             borderNode.fillColor = .clear
+            borderNode.lineCap = CGLineCap.round
             borderNode.name = "progressBorder"
             borderNode.zPosition = 1
             addChild(borderNode)
         }
     }
+    
     private func interpolateColor(from start: UIColor, to end: UIColor, factor: CGFloat) -> UIColor {
         var sR: CGFloat = 0, sG: CGFloat = 0, sB: CGFloat = 0, sA: CGFloat = 0
         var eR: CGFloat = 0, eG: CGFloat = 0, eB: CGFloat = 0, eA: CGFloat = 0
@@ -223,24 +240,20 @@ class Bubble: SKShapeNode {
         
         self.removeAction(forKey: "moveUp")
         
-        // 🔹 Den aktuellsten Stand der Spracherkennung zum Zeitpunkt des Klicks speichern
         var lastRecognizedText = speechRecognizer?.recognizedText ?? ""
         
-        // 🔹 Setze den erkannten Text für diese Bubble zurück
         recognizedText = ""
         displayRecognizedText()
         
         speechRecognizer?.onResult = { [weak self] newText in
             guard let self = self else { return }
             
-            // 🔹 Extrahiere nur den Teil des Textes, der nach dem Klick gesprochen wurde
             let newPart = self.extractNewText(oldText: lastRecognizedText, newText: newText)
             
             if !newPart.isEmpty {
                 self.updateRecognizedText(newText: newPart)
             }
             
-            // 🔹 Aktualisiere `lastRecognizedText`, damit wir immer den neuesten Stand haben
             lastRecognizedText = newText
         }
     }

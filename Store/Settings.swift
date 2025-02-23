@@ -13,17 +13,17 @@ class Settings: ObservableObject {
             saveItems(for: selectedLanguage, words: targetItems)
         }
     }
-    @Published var sourceItems: [Item] = [] // 🌍 Speichert Wörter in der System-Sprache
+    @Published var sourceItems: [Item] = []
     @Published var selectedFlag: String = "🇺🇸"
     @Published var availableLanguages: [String: Language] = [:]
     
-    private var localizationData: [String: [String: [String: String]]] = [:] // Speicher für Lokalisierungstexte
+    private var localizationData: [String: [String: [String: String]]] = [:]
     
     init() {
         loadLanguages()
         detectSystemLanguage()
         loadItems()
-        loadLocalization() // 🔹 Lokalisierungsdaten laden
+        loadLocalization()
     }
     
     private func detectSystemLanguage() {
@@ -91,7 +91,6 @@ class Settings: ObservableObject {
         saveItems(for: selectedLanguage, words: targetItems)
     }
     
-    // 🔹 Lokalisierungsdaten aus JSON laden
     private func loadLocalization() {
         guard let url = Bundle.main.url(forResource: "localization", withExtension: "json") else {
             print("Fehler: Lokalisierungsdatei nicht gefunden")
@@ -107,7 +106,6 @@ class Settings: ObservableObject {
         }
     }
     
-    // 🔹 Lokalen Text abrufen
     func localizedText(for key: String, in category: String) -> String {
         return localizationData[systemLanguage]?[category]?[key] ??
         localizationData["en"]?[category]?[key] ?? "MISSING_TEXT"

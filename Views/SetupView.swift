@@ -78,13 +78,13 @@ struct SetupView: View {
                             if selectedItemID == item.id {
                                 Button(action: {
                                     deleteItem(item)
-                                    selectedItemID = nil // Auswahl zurücksetzen nach dem Löschen
+                                    selectedItemID = nil
                                 }) {
                                     Image(systemName: "trash")
                                         .foregroundColor(.red)
                                         .font(.system(size: 18))
                                 }
-                                .transition(.opacity) // Weiche Einblendung
+                                .transition(.opacity)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .trailing)
@@ -149,7 +149,6 @@ struct SetupView: View {
     }
 }
 
-// **Blur View für Navigation Bar**
 struct VisualEffectBlurView: UIViewRepresentable {
     var style: UIBlurEffect.Style
 
