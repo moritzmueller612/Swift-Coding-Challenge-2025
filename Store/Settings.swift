@@ -24,6 +24,9 @@ class Settings: ObservableObject {
         detectSystemLanguage()
         loadItems()
         loadLocalization()
+        
+        self.targetItems = getItems(for: selectedLanguage)
+        self.sourceItems = getItems(for: systemLanguage)
     }
     
     private func detectSystemLanguage() {
@@ -51,7 +54,11 @@ class Settings: ObservableObject {
                 self.availableLanguages = decodedData.languages
                 
                 for (code, language) in decodedData.languages {
-                    UserDefaults.standard.set(try? JSONEncoder().encode(language.words), forKey: "items_\(code)")
+                    let key = "items_\(code)"
+                    
+                    if UserDefaults.standard.data(forKey: key) == nil {
+                        UserDefaults.standard.set(try? JSONEncoder().encode(language.words), forKey: key)
+                    }
                 }
                 
                 self.detectSystemLanguage()
@@ -109,5 +116,19 @@ class Settings: ObservableObject {
     func localizedText(for key: String, in category: String) -> String {
         return localizationData[systemLanguage]?[category]?[key] ??
         localizationData["en"]?[category]?[key] ?? "MISSING_TEXT"
+    }
+    
+    public func saveHighscore(for language: String, score: Int) {
+        let key = "highscore_\(language)"
+        UserDefaults.standard.set(score, forKey: key)
+    }
+    
+    public func getHighscore(for language: String) -> Int {
+        let key = "highscore_\(language)"
+        return UserDefaults.standard.integer(forKey: key)
+    }
+    
+    public func getWordCount(for language: String) -> Int {
+        return getItems(for: language).count
     }
 }

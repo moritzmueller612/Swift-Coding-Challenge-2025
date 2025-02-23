@@ -240,27 +240,13 @@ class Bubble: SKShapeNode {
         
         self.removeAction(forKey: "moveUp")
         
-        var lastRecognizedText = speechRecognizer?.recognizedText ?? ""
-        
         recognizedText = ""
         displayRecognizedText()
         
         speechRecognizer?.onResult = { [weak self] newText in
             guard let self = self else { return }
             
-            let newPart = self.extractNewText(oldText: lastRecognizedText, newText: newText)
-            
-            if !newPart.isEmpty {
-                self.updateRecognizedText(newText: newPart)
-            }
-            
-            lastRecognizedText = newText
+            self.updateRecognizedText(newText: newText)
         }
-    }
-    
-    private func extractNewText(oldText: String, newText: String) -> String {
-        guard newText.count > oldText.count else { return newText }
-        let startIndex = newText.index(newText.startIndex, offsetBy: oldText.count)
-        return String(newText[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

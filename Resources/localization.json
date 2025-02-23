@@ -30,7 +30,7 @@
         "languageSelection": {
             "headline": "Great to have you here!",
             "info": "Before we begin, please select a language.",
-            "highscore": "Your Highscore",
+            "highscore": "Highscore",
             "button": "Let's get started"
         },
         "setupView": {

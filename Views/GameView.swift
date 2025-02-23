@@ -4,6 +4,7 @@ import SpriteKit
 
 struct GameView: View {
     @State private var score: Int = 0
+    @State private var highscore: Int = 0
     @State private var animateScore = false
     @State private var showInfoText = true
     @Binding var setupComplete: Bool
@@ -43,22 +44,24 @@ struct GameView: View {
                         
                         Spacer()
                         
-                        Text("\(settings.localizedText(for: "score", in: "gameView")) \(score)")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundColor(animateScore ? .yellow : .white)
-                            .padding(.vertical, 10)
-                            .padding(.horizontal, 20)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.blue.opacity(animateScore ? 1.0 : 0.8))
-                                    .shadow(color: .blue.opacity(0.5), radius: animateScore ? 10 : 4)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                            )
-                            .scaleEffect(animateScore ? 1.2 : 1.0)
-                            .animation(.spring(response: 0.3, dampingFraction: 0.5, blendDuration: 0), value: animateScore)
+                        VStack {
+                            Text("\(settings.localizedText(for: "score", in: "gameView")) \(score)")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundColor(animateScore ? .yellow : .white)
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 20)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.blue.opacity(animateScore ? 1.0 : 0.8))
+                                        .shadow(color: .blue.opacity(0.5), radius: animateScore ? 10 : 4)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                )
+                                .scaleEffect(animateScore ? 1.2 : 1.0)
+                                .animation(.spring(response: 0.3, dampingFraction: 0.5, blendDuration: 0), value: animateScore)
+                        }
                         
                         Spacer()
                         
@@ -93,6 +96,7 @@ struct GameView: View {
         .onAppear {
             configureAudioSession()
             speechRecognizer.startListening()
+            loadHighscore()
         }
         .onDisappear {
             speechRecognizer.stopListening()
@@ -121,6 +125,11 @@ struct GameView: View {
             }
         }
         
+        if score > highscore {
+            highscore = score
+            saveHighscore()
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             animateScore = false
         }
@@ -134,5 +143,15 @@ struct GameView: View {
         } catch {
             print(error)
         }
+    }
+    
+    private func saveHighscore() {
+        let languageKey = "highscore_\(settings.selectedLanguage)"
+        UserDefaults.standard.set(highscore, forKey: languageKey)
+    }
+    
+    private func loadHighscore() {
+        let languageKey = "highscore_\(settings.selectedLanguage)"
+        highscore = UserDefaults.standard.integer(forKey: languageKey)
     }
 }

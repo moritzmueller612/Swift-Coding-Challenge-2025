@@ -8,7 +8,7 @@ struct LanguageSelection: View {
         VStack(spacing: 20) {
             Spacer()
             
-            VStack(spacing: 12){
+            VStack(spacing: 12) {
                 Text(settings.localizedText(for: "headline", in: "languageSelection"))
                     .font(.title2)
                     .fontWeight(.semibold)
@@ -28,23 +28,46 @@ struct LanguageSelection: View {
             ) {
                 ForEach(settings.availableLanguages.keys.sorted(), id: \.self) { languageCode in
                     if let language = settings.availableLanguages[languageCode],
-                       !languageCode.contains(settings.systemLanguage) { 
-                        Button(action: {
-                            settings.selectedLanguage = languageCode
-                        }) {
-                            VStack {
-                                Text(language.flag)
-                                    .font(.system(size: 60))
-                                
-                                Text(language.name)
-                                    .font(.subheadline)
-                                    .foregroundColor(settings.selectedLanguage == languageCode ? .white : .primary)
+                       !languageCode.contains(settings.systemLanguage) {
+                        
+                        ZStack() {
+                            Button(action: {
+                                settings.selectedLanguage = languageCode
+                            }) {
+                                VStack(spacing: 6) {
+                                    Spacer()
+                                    Text(language.flag)
+                                        .font(.system(size: 60))
+                                    
+                                    Text(language.name)
+                                        .font(.subheadline)
+                                        .foregroundColor(settings.selectedLanguage == languageCode ? .white : .primary)
+                                    
+                                    Spacer(minLength: 5)
+                                    
+                                    if settings.getHighscore(for: languageCode) > 0 {
+                                        HighscoreBadge(
+                                            score: settings.getHighscore(for: languageCode),
+                                            text: settings.localizedText(for: "highscore", in: "languageSelection")
+                                        )
+                                    }
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: 132)
+                                .padding()
+                                .background(settings.selectedLanguage == languageCode ? Color.blue : Color(.systemGray5))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(
+                                    Group {
+                                        if settings.getWordCount(for: languageCode) > 0 {
+                                            WordCountBadge(count: settings.getWordCount(for: languageCode))
+                                                .offset(x: -8, y: 8)
+                                        }
+                                    },
+                                    alignment: .topTrailing
+                                )
+                                .animation(.easeInOut, value: settings.selectedLanguage)
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity, minHeight: 120)
-                            .background(settings.selectedLanguage == languageCode ? Color.blue : Color(.systemGray5))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .animation(.easeInOut, value: settings.selectedLanguage)
                         }
                     }
                 }
@@ -73,5 +96,6 @@ struct LanguageSelection: View {
         .frame(maxHeight: .infinity)
         .padding()
         .background(Color(.systemGray6).edgesIgnoringSafeArea(.all))
+        .rotationEffect(.degrees(UIDevice.current.orientation.isLandscape ? 90 : 0))
     }
 }
