@@ -274,7 +274,7 @@ class Bubble: SKShapeNode {
     
     /// Extracts only the newly spoken part of the text.
     private func extractNewText(oldText: String, newText: String) -> String {
-        guard newText.count > oldText.count else { return "" }  // If no new text is present, return empty string
+        guard newText.count > oldText.count else { return newText }
         let startIndex = newText.index(newText.startIndex, offsetBy: oldText.count)
         return String(newText[startIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
